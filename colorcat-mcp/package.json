@@ -1,7 +1,7 @@
 {
   "name": "colorcat-mcp",
   "version": "1.0.0",
-  "description": "ColorCat 配色猫 — MCP server: 125 组开源色板 + 色彩数学 + WCAG 对比度 + OKLCH 色阶生成",
+  "description": "ColorCat 配色猫 — MCP server: 127 组开源色板 + 色彩数学 + WCAG 对比度 + OKLCH 色阶生成",
   "type": "module",
   "main": "server.js",
   "bin": {
