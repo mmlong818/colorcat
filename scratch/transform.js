@@ -483,9 +483,10 @@ const PALETTES = [];
   let added = 0, addedSets = 0;
   for (const [pkg, pals] of Object.entries(j)) {
     if (SKIP.has(pkg)) continue;
+    const to6 = c => (/^#[0-9a-fA-F]{8}$/.test(c) ? c.slice(0, 7) : c);   // 8 位 RGBA → 丢弃 alpha（paletteer 部分包为 #RRGGBBAA）
     const sets = Object.entries(pals)
-      .filter(([, v]) => Array.isArray(v) && v.length >= 3 && v.every(c => /^#[0-9a-fA-F]{6}$/.test(c)))
-      .map(([name, colors]) => ({ name, colors: colors.map(c => assertHex(c)) }));
+      .filter(([, v]) => Array.isArray(v) && v.length >= 3 && v.every(c => /^#[0-9a-fA-F]{6}$/.test(to6(c))))
+      .map(([name, colors]) => ({ name, colors: colors.map(c => assertHex(to6(c))) }));
     if (!sets.length) continue;
     const [cn, desc] = PKG_INFO[pkg] || [pkg, pkg + ' 包社区色板'];
     PALETTES.push({

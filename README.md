@@ -1,7 +1,7 @@
 # ColorCat · 全能配色工作台
 
 > OmniPalette — one workbench for every good color.
-> 125 组开源色板（4,800+ 色块 / 2,764 套现成配色）· 色彩工程引擎 · MCP 服务 · 五语言界面（中/英/法/俄/日）· 纯前端离线可用
+> 127 组开源色板（4,900+ 色块 / 2,823 套现成配色）· 色彩工程引擎 · MCP 服务 · 五语言界面（中/英/法/俄/日）· 纯前端离线可用
 
 [![License: MIT](https://img.shields.io/badge/Code-MIT-blue.svg)](LICENSE)
 
@@ -51,7 +51,7 @@ node test/client-test.mjs   # 可选：40 项端到端自测
 }
 ```
 
-10 个工具：`search_palettes` · `get_palette` · `get_brewer_classes` · `convert_color` · `contrast_check` · `suggest_fix` · `generate_scale` · `check_gradient` · `simulate_vision` · `preview_roles`。
+10 个工具 + 双传输模式（stdio / Streamable HTTP 远程）：`search_palettes` · `get_palette` · `get_brewer_classes` · `convert_color` · `contrast_check` · `suggest_fix` · `generate_scale` · `check_gradient` · `simulate_vision` · `preview_roles`。
 
 ### 3. 重新生成数据
 
@@ -61,6 +61,43 @@ node test/client-test.mjs   # 可选：40 项端到端自测
 node scratch/transform.js    # 产出 color-hub/palettes.js + colorcat-mcp/data.json
 node scratch/gen-m3.js       # 重新生成 Material 3 音调色板（需 scratch/dl/mcu-pkg）
 ```
+
+
+## MCP 三种部署方式
+
+### A. 本地分发（最简单）
+别人 clone 本仓库，进入 colorcat-mcp 执行 npm install，然后在客户端配置指向 server.js 的绝对路径。每人本地跑，数据离线，无需任何服务器。
+
+### B. npm 分发（生态标准）
+维护者执行 npm publish --access public 发布后，别人无需 clone，客户端配置直接写：
+
+```json
+{ "command": "npx", "args": ["-y", "colorcat-mcp"] }
+```
+
+### C. 远程 HTTP（我架设，别人连我）
+
+```bash
+COLORCAT_TOKEN=你的秘密 node server.js --http 3010
+```
+
+- `/mcp` 为 Streamable HTTP 端点；设置了 COLORCAT_TOKEN 后，请求需带 `Authorization: Bearer <token>`
+- 客户端配置（支持远程 MCP 的客户端，如 Cursor / ZCode 新版）：
+
+```json
+{
+  "colorcat": {
+    "type": "http",
+    "url": "http://你的主机:3010/mcp",
+    "headers": { "Authorization": "Bearer 你的秘密" }
+  }
+}
+```
+
+- 部署去处：云服务器（pm2 / systemd）、Render / Railway / Fly 免费层、或家庭机器 + 内网穿透（cloudflare tunnel / frp / tailscale）
+- 公网暴露务必设置 COLORCAT_TOKEN
+
+测试：`npm test`（stdio 40 项）+ `node test/http-test.mjs`（HTTP 7 项）。
 
 ## 数据来源与许可
 

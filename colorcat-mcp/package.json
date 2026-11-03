@@ -4,10 +4,16 @@
   "description": "ColorCat 配色猫 — MCP server: 125 组开源色板 + 色彩数学 + WCAG 对比度 + OKLCH 色阶生成",
   "type": "module",
   "main": "server.js",
-  "bin": { "colorcat-mcp": "server.js" },
-  "scripts": { "start": "node server.js", "test": "node test/client-test.mjs" },
+  "bin": {
+    "colorcat-mcp": "server.js"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test/client-test.mjs"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.13.0",
+    "express": "^5.3.0",
     "zod": "^3.23.8"
   }
 }
