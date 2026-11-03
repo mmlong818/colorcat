@@ -1,0 +1,347 @@
+{
+ "source": "#6750A4",
+ "palettes": {
+  "primary": {
+   "label": "Primary 主色",
+   "tones": [
+    {
+     "tone": 0,
+     "hex": "#000000"
+    },
+    {
+     "tone": 10,
+     "hex": "#22005D"
+    },
+    {
+     "tone": 20,
+     "hex": "#381E72"
+    },
+    {
+     "tone": 30,
+     "hex": "#4F378A"
+    },
+    {
+     "tone": 40,
+     "hex": "#6750A4"
+    },
+    {
+     "tone": 50,
+     "hex": "#8069BF"
+    },
+    {
+     "tone": 60,
+     "hex": "#9A83DB"
+    },
+    {
+     "tone": 70,
+     "hex": "#B69DF8"
+    },
+    {
+     "tone": 80,
+     "hex": "#CFBCFF"
+    },
+    {
+     "tone": 90,
+     "hex": "#E9DDFF"
+    },
+    {
+     "tone": 95,
+     "hex": "#F6EEFF"
+    },
+    {
+     "tone": 99,
+     "hex": "#FFFBFF"
+    },
+    {
+     "tone": 100,
+     "hex": "#FFFFFF"
+    }
+   ]
+  },
+  "secondary": {
+   "label": "Secondary 次色",
+   "tones": [
+    {
+     "tone": 0,
+     "hex": "#000000"
+    },
+    {
+     "tone": 10,
+     "hex": "#1E192B"
+    },
+    {
+     "tone": 20,
+     "hex": "#332D41"
+    },
+    {
+     "tone": 30,
+     "hex": "#4A4458"
+    },
+    {
+     "tone": 40,
+     "hex": "#625B71"
+    },
+    {
+     "tone": 50,
+     "hex": "#7B748A"
+    },
+    {
+     "tone": 60,
+     "hex": "#958DA4"
+    },
+    {
+     "tone": 70,
+     "hex": "#B0A7C0"
+    },
+    {
+     "tone": 80,
+     "hex": "#CBC2DB"
+    },
+    {
+     "tone": 90,
+     "hex": "#E8DEF8"
+    },
+    {
+     "tone": 95,
+     "hex": "#F6EEFF"
+    },
+    {
+     "tone": 99,
+     "hex": "#FFFBFF"
+    },
+    {
+     "tone": 100,
+     "hex": "#FFFFFF"
+    }
+   ]
+  },
+  "tertiary": {
+   "label": "Tertiary 第三色",
+   "tones": [
+    {
+     "tone": 0,
+     "hex": "#000000"
+    },
+    {
+     "tone": 10,
+     "hex": "#31101D"
+    },
+    {
+     "tone": 20,
+     "hex": "#4A2532"
+    },
+    {
+     "tone": 30,
+     "hex": "#633B48"
+    },
+    {
+     "tone": 40,
+     "hex": "#7E5260"
+    },
+    {
+     "tone": 50,
+     "hex": "#996A79"
+    },
+    {
+     "tone": 60,
+     "hex": "#B58392"
+    },
+    {
+     "tone": 70,
+     "hex": "#D29DAD"
+    },
+    {
+     "tone": 80,
+     "hex": "#EFB8C8"
+    },
+    {
+     "tone": 90,
+     "hex": "#FFD9E3"
+    },
+    {
+     "tone": 95,
+     "hex": "#FFECF0"
+    },
+    {
+     "tone": 99,
+     "hex": "#FFFBFF"
+    },
+    {
+     "tone": 100,
+     "hex": "#FFFFFF"
+    }
+   ]
+  },
+  "neutral": {
+   "label": "Neutral 中性",
+   "tones": [
+    {
+     "tone": 0,
+     "hex": "#000000"
+    },
+    {
+     "tone": 10,
+     "hex": "#1C1B1E"
+    },
+    {
+     "tone": 20,
+     "hex": "#313033"
+    },
+    {
+     "tone": 30,
+     "hex": "#48464A"
+    },
+    {
+     "tone": 40,
+     "hex": "#605D62"
+    },
+    {
+     "tone": 50,
+     "hex": "#79767A"
+    },
+    {
+     "tone": 60,
+     "hex": "#938F94"
+    },
+    {
+     "tone": 70,
+     "hex": "#AEAAAE"
+    },
+    {
+     "tone": 80,
+     "hex": "#CAC5CA"
+    },
+    {
+     "tone": 90,
+     "hex": "#E6E1E6"
+    },
+    {
+     "tone": 95,
+     "hex": "#F4EFF4"
+    },
+    {
+     "tone": 99,
+     "hex": "#FFFBFF"
+    },
+    {
+     "tone": 100,
+     "hex": "#FFFFFF"
+    }
+   ]
+  },
+  "neutralVariant": {
+   "label": "Neutral Variant 中性变体",
+   "tones": [
+    {
+     "tone": 0,
+     "hex": "#000000"
+    },
+    {
+     "tone": 10,
+     "hex": "#1D1A22"
+    },
+    {
+     "tone": 20,
+     "hex": "#322F38"
+    },
+    {
+     "tone": 30,
+     "hex": "#49454E"
+    },
+    {
+     "tone": 40,
+     "hex": "#615D66"
+    },
+    {
+     "tone": 50,
+     "hex": "#7A757F"
+    },
+    {
+     "tone": 60,
+     "hex": "#948F99"
+    },
+    {
+     "tone": 70,
+     "hex": "#AFA9B4"
+    },
+    {
+     "tone": 80,
+     "hex": "#CAC4CF"
+    },
+    {
+     "tone": 90,
+     "hex": "#E7E0EB"
+    },
+    {
+     "tone": 95,
+     "hex": "#F5EEFA"
+    },
+    {
+     "tone": 99,
+     "hex": "#FFFBFF"
+    },
+    {
+     "tone": 100,
+     "hex": "#FFFFFF"
+    }
+   ]
+  },
+  "error": {
+   "label": "Error 错误",
+   "tones": [
+    {
+     "tone": 0,
+     "hex": "#000000"
+    },
+    {
+     "tone": 10,
+     "hex": "#410002"
+    },
+    {
+     "tone": 20,
+     "hex": "#690005"
+    },
+    {
+     "tone": 30,
+     "hex": "#93000A"
+    },
+    {
+     "tone": 40,
+     "hex": "#BA1A1A"
+    },
+    {
+     "tone": 50,
+     "hex": "#DE3730"
+    },
+    {
+     "tone": 60,
+     "hex": "#FF5449"
+    },
+    {
+     "tone": 70,
+     "hex": "#FF897D"
+    },
+    {
+     "tone": 80,
+     "hex": "#FFB4AB"
+    },
+    {
+     "tone": 90,
+     "hex": "#FFDAD6"
+    },
+    {
+     "tone": 95,
+     "hex": "#FFEDEA"
+    },
+    {
+     "tone": 99,
+     "hex": "#FFFBFF"
+    },
+    {
+     "tone": 100,
+     "hex": "#FFFFFF"
+    }
+   ]
+  }
+ }
+}

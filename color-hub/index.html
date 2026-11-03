@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>全能配色工作台 OmniPalette · 36 组开源色板 + 生成器 + 无障碍工具</title>
+<meta name="description" content="整合 Open Color、Tailwind、Ant Design、Radix、ColorBrewer、Viridis、科学色图、Nord、Catppuccin、Dracula、Solarized 与中日传统色的配色工作台：色板库、11 种配色生成器、对比度检查、色盲模拟、多格式导出。">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="10" cy="10" r="7" fill="%23e5484d"/><circle cx="22" cy="10" r="7" fill="%23eacb2c"/><circle cx="10" cy="22" r="7" fill="%232f80ed"/><circle cx="22" cy="22" r="7" fill="%2312a594"/></svg>'>
+<link rel="stylesheet" href="style.css?v=20261107">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <div class="brand">
+      <span class="brand-ring" aria-hidden="true"></span>
+      <span>OmniPalette<span style="font-weight:500;color:var(--muted);margin-left:6px" data-i18n="brand.sub">全能配色工作台</span></span>
+    </div>
+    <nav class="nav-tabs" id="navTabs" aria-label="功能切换">
+      <button class="nav-tab active" data-tab="library" type="button" data-i18n="nav.library">色板库</button>
+      <button class="nav-tab" data-tab="scale" type="button" data-i18n="nav.scale">色阶工坊</button>
+      <button class="nav-tab" data-tab="generator" type="button" data-i18n="nav.generator">配色生成器</button>
+      <button class="nav-tab" data-tab="a11y" type="button" data-i18n="nav.a11y">无障碍实验室</button>
+      <button class="nav-tab" data-tab="preview" type="button" data-i18n="nav.preview">应用预览</button>
+    </nav>
+    <select id="langSel" class="text-input" style="height:30px;width:112px;padding:0 6px" aria-label="Language"></select>
+    <button id="btnTheme" class="btn btn-sm" type="button" aria-label="切换深浅色主题">深色</button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ========== 首屏横幅 ========== -->
+  <div class="hero-band">
+    <div>
+      <h1 class="grad-text" data-i18n="hero.title">把好颜色，都装进一个工作台</h1>
+      <p class="sub text-mini" data-i18n="hero.sub">设计系统 · 学术色图 · 策展配色 · 传统色 · 生成器 · 无障碍实验室 —— 全部离线可用</p>
+    </div>
+    <div class="stat-row" id="heroStats" aria-label="数据统计"></div>
+  </div>
+
+  <!-- ========== 色板库 ========== -->
+  <section id="tab-library">
+    <div class="toolbar">
+      <input type="search" id="libSearch" class="text-input grow" data-i18n-ph="lib.searchPh" placeholder="搜索色板名称，如 tailwind / 传统色 / nord…" aria-label="搜索色板">
+      <div id="catChips" class="hue-chips" role="group" aria-label="按类别筛选" style="margin:0"></div>
+      <button id="btnStarExport" class="btn" type="button" hidden title="导出全部收藏色板的 JSON">导出收藏夹</button>
+    </div>
+    <div id="detail" class="panel" aria-live="polite"></div>
+    <div id="libGrid" class="lib-grid"></div>
+  </section>
+
+  <!-- ========== 色阶工坊 ========== -->
+  <section id="tab-scale" hidden>
+    <div class="top-grid">
+      <div class="panel">
+        <h2 data-i18n="scale.h1">① 基色与模式</h2>
+        <div class="hue-chips" id="scMode" role="group" aria-label="生成模式">
+          <button type="button" class="cat-chip active" data-mode="semantic"="scale.modeSemantic">语义色阶模式</button>
+          <button type="button" class="cat-chip" data-mode="contrast"="scale.modeContrast">对比度目标模式</button>
+        </div>
+        <div class="controls" style="margin-top:10px">
+          <input type="color" id="scColorChip" class="chip" aria-label="拾色器">
+          <input type="text" id="scHex" class="text-input" style="width:130px" placeholder="#2563EB" aria-label="输入 HEX 颜色">
+          <button id="btnScRandom" class="btn" type="button" data-i18n="btn.randomScale">随机颜色</button>
+        </div>
+        <p class="text-mini" id="scOklch" aria-live="polite" style="margin-top:8px"></p>
+        <div id="scContrastCtrls" hidden>
+          <h2 style="margin-top:14px" data-i18n="scale.paramTitle">对比度目标参数（Leonardo 思路）</h2>
+          <div class="controls">
+            <label class="text-mini"><span data-i18n="scale.bg">背景色</span><input type="color" id="scBg" class="chip" value="#FFFFFF" aria-label="背景色"></label>
+            <label class="text-mini"><span data-i18n="scale.count">阶数</span>
+              <select id="scCount" class="text-input" style="width:72px" aria-label="阶数">
+                <option>6</option><option selected>10</option><option>12</option>
+              </select>
+            </label>
+            <label class="text-mini"><span data-i18n="scale.min">最小对比度</span><input type="number" id="scMin" class="text-input" style="width:76px" value="1.1" min="1.05" max="21" step="0.05" aria-label="最小对比度"></label>
+            <label class="text-mini"><span data-i18n="scale.max">最大对比度</span><input type="number" id="scMax" class="text-input" style="width:76px" value="7" min="1.05" max="21" step="0.5" aria-label="最大对比度"></label>
+          </div>
+          <p class="text-mini">每阶按几何分布瞄准一个目标对比度（如 1.1× → 7×），保留基色色相，用二分法求解明度——这正是 Adobe Leonardo 的「按对比度生成」思路。</p>
+        </div>
+
+        <h2 style="margin-top:20px" data-i18n="scale.h2">② 从图片提取颜色（可选）</h2>
+        <div id="scDropzone" class="dropzone">
+          <p id="scDzHint"><span data-i18n="scale.dzHint1">点击上传图片，或把图片拖到这里</span><br><span class="text-mini" data-i18n="scale.dzHint2">加载后点击画面任意位置取色，自动生成新色阶</span></p>
+          <canvas id="scCanvas" hidden></canvas>
+          <input type="file" id="scFile" accept="image/*" hidden>
+        </div>
+        <div class="text-mini" style="margin-top:10px" data-i18n="scale.domTitle">图片主要颜色（点击设为基色）</div>
+        <div id="scDomRow" class="dom-row" style="margin-top:6px"><span class="text-mini" data-i18n="scale.domEmpty">上传图片后显示…</span></div>
+      </div>
+      <div class="panel">
+        <h2 id="scPanelTitle">③ 语义色阶 · 12 阶（OKLCH 感知均匀生成）</h2>
+        <div id="scReadout"></div>
+        <div class="scale-row" id="scSteps" aria-live="polite"></div>
+        <div class="detail-actions">
+          <button type="button" class="btn btn-sm" data-sc-fmt="css">复制 CSS</button>
+          <button type="button" class="btn btn-sm" data-sc-fmt="json">复制 JSON</button>
+          <button type="button" class="btn btn-sm" id="btnScDownload">下载 CSS 文件</button>
+        </div>
+        <p class="text-mini" id="scNote"></p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 data-i18n="scale.h4">④ 渐变色阶检查器（chroma.js Palette Helper 思路重写）</h2>
+      <p class="text-mini">在 OKLab 空间做感知均匀插值，并检查明度曲线是否出现「亮带」、各段在色盲视角下能否区分。</p>
+      <div class="controls">
+        <label class="text-mini"><span data-i18n="gc.start">起点</span><input type="color" id="gcA" class="chip" value="#2C7FDD" aria-label="渐变起点"></label>
+        <label class="text-mini"><span data-i18n="gc.mid">中点</span><input type="color" id="gcM" class="chip" value="#7C3AED" aria-label="渐变中点"></label>
+        <label class="text-mini"><span data-i18n="gc.end">终点</span><input type="color" id="gcB" class="chip" value="#F59E0B" aria-label="渐变终点"></label>
+        <button id="btnGcRandom" class="btn" type="button" data-i18n="btn.randomGrad">随机三色</button>
+      </div>
+      <div id="gcOut" aria-live="polite"></div>
+    </div>
+    <p class="text-mini" style="margin-top:4px">语义角色参考 Radix Colors 的用法约定：1–2 背景 · 3–4 交互态底色 · 5–7 边框 · 8–10 强调实色 · 11–12 文字。OKLab 数学基于 Björn Ottosson 的公有领域成果；检查器思路来自开源的 chroma.js Color Palette Helper 与 Adobe Leonardo。</p>
+  </section>
+
+  <!-- ========== 配色生成器 ========== -->
+  <section id="tab-generator" hidden>
+    <div class="panel">
+      <h2 data-i18n="gen.h">从基色生成 11 种经典配色方案</h2>
+      <div class="controls">
+        <input type="color" id="genColorChip" class="chip" aria-label="拾色器">
+        <input type="text" id="genHex" class="text-input" style="width:130px" placeholder="#3B82F6" aria-label="输入 HEX 颜色">
+        <button id="btnGenApply" class="btn btn-primary" type="button" data-i18n="btn.gen">生成配色</button>
+        <button id="btnGenRandom" class="btn" type="button" data-i18n="btn.random">随机颜色</button>
+      </div>
+      <div class="top-grid">
+        <div>
+          <div id="wheelPills" class="pills" role="tablist" aria-label="选择方案查看色环几何"></div>
+          <div class="wheel-wrap">
+            <div class="wheel" id="wheel" aria-hidden="true"></div>
+            <svg id="wheelSvg" viewBox="0 0 320 320" aria-hidden="true"></svg>
+            <div class="wheel-center" id="wheelCenter"><span id="wcHex">—</span><span class="text-mini">基色</span></div>
+          </div>
+          <p class="text-mini" data-i18n="gen.wheelHint">点击方案卡标题，可在色环中查看它的几何关系。</p>
+        </div>
+        <div>
+          <h2 style="margin-bottom:8px" data-i18n="gen.baseInfo">基础颜色信息</h2>
+          <div id="genInfoRows"></div>
+        </div>
+      </div>
+    </div>
+    <section id="genSchemeGrid" class="scheme-grid" aria-live="polite"></section>
+  </section>
+
+  <!-- ========== 无障碍实验室 ========== -->
+  <section id="tab-a11y" hidden>
+    <div class="a11y-grid">
+      <div class="panel">
+        <h2 data-i18n="a11y.h1">对比度检查器（WCAG 2.1）</h2>
+        <div class="controls">
+          <label class="text-mini"><span data-i18n="a11y.fg">前景</span><input type="color" id="fgColor" class="chip" value="#FFFFFF" aria-label="前景色"></label>
+          <label class="text-mini"><span data-i18n="a11y.bgC">背景</span><input type="color" id="bgColor" class="chip" value="#2563EB" aria-label="背景色"></label>
+          <button id="btnSwap" class="btn" type="button" data-i18n="btn.swap">交换</button>
+        </div>
+        <div class="ratio-big" id="ratioVal" aria-live="polite">—</div>
+        <div class="wcag-row" id="wcagBadges"></div>
+        <div class="sample-box" id="sampleArea"></div>
+        <div id="fixArea" style="margin-top:12px" aria-live="polite"></div>
+        <p class="text-mini" data-i18n="a11y.hint">标准正文要求 ≥ 4.5:1；大字号（≥18.66px 粗体 / ≥24px）要求 ≥ 3:1；图形与 UI 组件要求 ≥ 3:1。</p>
+      </div>
+      <div class="panel">
+        <h2 data-i18n="a11y.convTitle">颜色格式转换</h2>
+        <div class="controls">
+          <input type="color" id="convInput" class="chip" value="#2563EB" aria-label="选择颜色">
+          <input type="text" id="convText" class="text-input" style="width:130px" value="#2563EB" aria-label="输入颜色">
+        </div>
+        <div id="convRows"></div>
+        <p class="text-mini" data-i18n="a11y.copyHint">点击任意一行复制对应值。</p>
+      </div>
+    </div>
+    <div class="panel">
+      <h2 data-i18n="a11y.cvdTitle">色盲模拟对照</h2>
+      <p class="text-mini" data-i18n="a11y.cvdHint">同一组示例色（取自当前色板库第一个 UI 色板）在各类色觉下的呈现。用它可以快速判断你的配色方案是否「撞色」。</p>
+      <div class="cvd-strip" id="cvdStrip"></div>
+    </div>
+  </section>
+
+  <!-- ========== 应用预览 ========== -->
+  <section id="tab-preview" hidden>
+    <div class="preview-controls">
+      <label class="text-mini"><span data-i18n="pv.h">色板</span>
+        <select id="pvSelect" class="text-input" aria-label="选择预览色板"></select>
+      </label>
+      <label class="text-mini" id="pvHueWrap" hidden><span data-i18n="pv.hue">色相</span>
+        <select id="pvHue" class="text-input" aria-label="选择色相"></select>
+      </label>
+      <label class="text-mini" id="pvSetWrap" hidden><span data-i18n="pv.set">套</span>
+        <select id="pvSet" class="text-input" aria-label="选择套"></select>
+      </label>
+      <label class="text-mini"><span data-i18n="pv.sim">色觉模拟</span>
+        <select id="pvSim" class="text-input" aria-label="选择色觉模拟">
+          <option value="none" data-i18n="cvd.none">正常视觉</option>
+          <option value="prot" data-i18n="cvd.prot">红色盲（Protanopia）</option>
+          <option value="deut" data-i18n="cvd.deut">绿色盲（Deuteranopia）</option>
+          <option value="trit" data-i18n="cvd.trit">蓝黄色盲（Tritanopia）</option>
+          <option value="gray" data-i18n="cvd.gray">灰度（无彩色）</option>
+        </select>
+      </label>
+      <label class="text-mini" style="display:flex;gap:6px;align-items:center;cursor:pointer">
+        <input type="checkbox" id="pvCompare"> <span data-i18n="pv.compare">对比模式</span>
+      </label>
+      <label class="text-mini" id="pvBWrap" hidden><span data-i18n="pv.paletteB">色板 B</span>
+        <select id="pvB" class="text-input" aria-label="选择对比色板 B"></select>
+      </label>
+    </div>
+    <p class="text-mini" id="pvNote" style="margin-bottom:14px"></p>
+    <div class="pv-grid" id="pvSingle">
+      <div class="panel" style="margin:0">
+        <div class="chart-card">
+          <h3 data-i18n="pv.uiMock">界面样式模拟</h3>
+          <div class="ui-mock" id="pvUI"></div>
+        </div>
+      </div>
+      <div class="panel" style="margin:0">
+        <div class="chart-card">
+          <h3 data-i18n="pv.charts">数据可视化模拟</h3>
+          <svg id="pvBar" class="chart-svg" role="img" aria-label="柱状图预览"></svg>
+          <svg id="pvDonut" class="chart-svg" style="max-height:190px" role="img" aria-label="环形图预览"></svg>
+          <div class="legend-row" id="pvLegend"></div>
+        </div>
+      </div>
+    </div>
+    <div id="pvCompareView" hidden></div>
+    <p class="text-mini" style="margin-top:10px" data-i18n="pv.barNote">柱状图按数值映射：分类色板用离散颜色，连续色图（colormap）按数值插值取色——这正是两类配色的典型用法。</p>
+  </section>
+
+</main>
+
+<footer class="wrap footer">
+  <p data-i18n="footer.text">色板数据来自各开源项目（许可类型见各组色板标注）；Scientific Colour Maps 与 ColorBrewer 按其要求保留致谢。工具基于公开色彩理论原创实现，仅供学习。</p>
+</footer>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="i18n.js?v=20261107"></script>
+<script src="palettes.js?v=20261107"></script>
+<script src="app.js?v=20261108"></script>
+</body>
+</html>
