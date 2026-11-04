@@ -10,9 +10,8 @@
 ## 目录结构
 
 ```
-color-hub/      网站主体（色板库 / 色阶工坊 / 配色生成器 / 无障碍实验室 / 应用预览）
+color-hub/      网站主体（色板库 / 色阶工坊 / 配色生成器 / 无障碍实验室 / 应用预览）——含 11 种经典配色方案学习器
 colorcat-mcp/   MCP 服务器（stdio + Streamable HTTP 双传输，10 个工具）
-color-tool/     独立小工具：11 种经典配色方案学习器（单文件）
 scratch/        数据管线（从各开源官方源抓取 → 生成站点与 MCP 数据）
 ```
 
@@ -69,7 +68,7 @@ Claude Desktop（`claude_desktop_config.json`）结构略有不同，注意键�
 }
 ```
 
-12 个工具 + 双传输模式（stdio / Streamable HTTP）：`search_palettes` · `get_palette` · `get_brewer_classes` · `convert_color` · `contrast_check` · `suggest_fix` · `generate_scale` · `check_gradient` · `simulate_vision` · `preview_roles` · `audit_contrast`（批量对比度审计）· `generate_m3`（品牌色 → Material 3 动态主题，官方 HCT 引擎）。
+13 个工具 + 双传输模式（stdio / Streamable HTTP）：`search_palettes` · `get_palette` · `get_brewer_classes` · `convert_color` · `contrast_check` · `suggest_fix` · `generate_scale` · `check_gradient` · `simulate_vision` · `preview_roles` · `audit_contrast`（批量对比度审计）· `generate_m3`（品牌色 → Material 3 动态主题，官方 HCT 引擎）· `sample_colormap`（连续色图任意位置采样）。
 
 ### 3. 重新生成数据
 

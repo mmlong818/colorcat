@@ -529,6 +529,15 @@ fs.writeFileSync(OUT, banner + JSON.stringify(PALETTES) + ';\n');
 const MCP_OUT = path.join(__dirname, '..', 'colorcat-mcp', 'data.json');
 fs.writeFileSync(MCP_OUT, JSON.stringify(PALETTES));
 console.log(`同步输出: ${MCP_OUT}`);
+
+// 同步引擎到网页端（单一来源：colorcat-mcp/engine.js）
+const ENG_SRC = path.join(__dirname, '..', 'colorcat-mcp', 'engine.js');
+const engBody = fs.readFileSync(ENG_SRC, 'utf8').replace(/^export\s+/gm, '');
+const engNames = [...engBody.matchAll(/^(?:function|const|class|let|var)\s+(\w+)/gm)].map(m => m[1]);
+fs.writeFileSync(path.join(__dirname, '..', 'color-hub', 'engine.js'),
+  '/* 由 transform.js 从 colorcat-mcp/engine.js 构建；勿手改 */\n' + engBody +
+  'window.ColorEngine = { ' + engNames.join(', ') + ' };\n');
+console.log('同步输出: color-hub/engine.js (' + engNames.length + ' 导出)');
 const kb = (fs.statSync(OUT).size / 1024).toFixed(1);
 console.log(`palettes.js 写出: ${PALETTES.length} 组色板, ${kb} KB`);
 for (const p of PALETTES) {

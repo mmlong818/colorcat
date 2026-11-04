@@ -17,6 +17,7 @@
 | `check_gradient` | 渐变亮带检测 + 三类色盲逐段可区分性 |
 | `simulate_vision` | 红盲/绿盲/蓝黄盲/灰度模拟 |
 | `generate_m3` | 品牌色 → Material 3 动态主题：6 组音调色板 + 亮/暗 scheme token（官方 HCT 引擎） |
+| `sample_colormap` | 连续色图任意位置采样（数值 → 确定性色值），附 CSS gradient |
 | `audit_contrast` | 批量对比度审计：一批颜色对给定背景逐个判定正文/大字/UI 三档 |
 | `preview_roles` | 色板 → 界面角色映射（bg/surface/border/text/accent + 分类色 + ramp） |
 

@@ -31,8 +31,8 @@ const call = async (tool, args) => {
 /* 1. 工具清单 */
 const tools = await client.listTools();
 console.log(`\n[1] 工具清单：${tools.tools.length} 个`);
-check('工具数量 = 12', tools.tools.length === 12, `实际 ${tools.tools.length}`);
-check('含核心工具', ['search_palettes','get_palette','convert_color','contrast_check','suggest_fix','generate_scale','check_gradient','simulate_vision','preview_roles','get_brewer_classes','audit_contrast','generate_m3'].every(n => tools.tools.some(t => t.name === n)));
+check('工具数量 = 13', tools.tools.length === 13, `实际 ${tools.tools.length}`);
+check('含核心工具', ['search_palettes','get_palette','convert_color','contrast_check','suggest_fix','generate_scale','check_gradient','simulate_vision','preview_roles','get_brewer_classes','audit_contrast','generate_m3','sample_colormap'].every(n => tools.tools.some(t => t.name === n)));
 
 /* 2. search_palettes */
 console.log('\n[2] search_palettes');
@@ -146,6 +146,16 @@ console.log('\n[9] check_gradient');
   check('#000000 正文AA 过 (21:1)', r.rows?.[0].bodyAA === true && r.rows?.[0].ratio === 21, JSON.stringify(r.rows?.[0]));
   check('#888888 仅大字/UI 过', r.rows?.[1].bodyAA === false && r.rows?.[1].largeAA === true && r.rows?.[1].uiComponent === true, JSON.stringify(r.rows?.[1]));
   check('passBodyAA 计数 = 1', r.passBodyAA === 1);
+}
+
+/* 9c. sample_colormap */
+{
+  const r = await call('sample_colormap', { paletteId: 'mpl-viridis', count: 5 });
+  check('采样 5 档', r.colors?.length === 5, JSON.stringify(r.colors));
+  check('首档=深紫 尾档=亮黄', r.colors?.[0] === '#440154' && r.colors?.[4] === '#FDE725', JSON.stringify(r.colors));
+  check('附 CSS gradient', typeof r.gradientCss === 'string' && r.gradientCss.startsWith('linear-gradient'));
+  const bad = await call('sample_colormap', { paletteId: 'tailwind' });
+  check('非色图报错', bad.isError === true);
 }
 
 /* 10. simulate_vision */
