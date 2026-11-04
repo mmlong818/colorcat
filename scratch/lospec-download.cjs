@@ -1,4 +1,5 @@
 /* Lospec 全量下载：blob API by sha，并发 5 + 节流，带重试 */
+(async () => {
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
@@ -39,3 +40,5 @@ async function worker() {
 }
 await Promise.all(Array.from({ length: 5 }, worker));
 console.log(`DONE ${done}/${items.length}, fail=${fail}`);
+
+})().catch(e => { console.error(e); process.exit(1); });

@@ -1,5 +1,6 @@
-/* engine.js — 由 colorcat-mcp/engine.js 单一来源构建（scratch/transform.js 管线同步）
- * 勿手改：改引擎请改 colorcat-mcp/engine.js 后重新运行 node scratch/transform.js */
+/* 由 transform.js 从 colorcat-mcp/engine.js 构建（IIFE，避免全局污染）；勿手改 */
+(function(){
+'use strict';
 /* ColorCat 引擎 — 纯函数色彩数学（与网页版共用同一套公式，无 DOM 依赖）
  * 基准验证：OKLCH 与 Björn Ottosson 公开数值吻合；对比度求解误差 <0.05；10 色往返无损 */
 
@@ -385,3 +386,4 @@ function paletteRoles(p, hueIdx = 0, setIdx = 0){
 }
 
 window.ColorEngine = { norm, hslToRgb, rgbToHex, hexToRgb, rgbToHsl, rgbToHsv, rgbToCmyk, lin, gam, lum, rgbToLab, contrast, inkOn, lerpHex, hueName, parseColor, srgbToOklab, oklabToSrgbLinear, srgbToOklch, oklchInGamut, oklchToHex, oklabToHex, oklabGradientHex, CVD_MATRIX, simulate, wcagVerdicts, solveContrastStep, SCALE_ROLES, genScale, genContrastScale, recommendScaleColors, suggestFix, checkGradient, paletteRoles };
+})();

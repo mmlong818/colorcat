@@ -105,7 +105,7 @@ function download(name, content, mime){
 }
 /* ================= 全局状态 ================= */
 const CATS = [
-  { id: 'all' }, { id: 'starred' }, { id: 'ui' }, { id: 'viz' }, { id: 'curated' }, { id: 'editor' }, { id: 'traditional' },
+  { id: 'all' }, { id: 'starred' }, { id: 'ui' }, { id: 'viz' }, { id: 'curated' }, { id: 'pixel' }, { id: 'editor' }, { id: 'traditional' },
 ];
 /* 收藏夹（localStorage 持久化） */
 const starred = new Set();

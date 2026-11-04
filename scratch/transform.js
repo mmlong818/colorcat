@@ -518,6 +518,33 @@ const PALETTES = [];
   });
 }
 
+/* ---------- 19. Lospec 像素色板（打包数据 CC0-1.0） ---------- */
+{
+  const dir = path.join(__dirname, 'dl', 'lospec-palettes');
+  if (fs.existsSync(dir)) {
+    const sets = [];
+    for (const f of fs.readdirSync(dir)) {
+      if (!f.endsWith('.json')) continue;
+      try {
+        const j = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
+        if (!Array.isArray(j.colors) || j.colors.length < 3) continue;
+        const colors = j.colors.map(c => assertHex(c));
+        sets.push({ name: j.title || j.hashtag || f, colors, likes: parseInt(j.likes, 10) || 0 });
+      } catch (e) { /* 跳过坏文件 */ }
+    }
+    sets.sort((a, b) => b.likes - a.likes);
+    if (sets.length) {
+      PALETTES.push({
+        id: 'lospec', name: 'Lospec', cn: '像素色板 · Lospec ' + sets.length + ' 套', category: 'pixel', kind: 'set',
+        license: 'CC0-1.0', source: 'https://lospec.com/palette-list',
+        attribution: '© Lospec 社区投稿 · 数据打包 gagath/lospec-palette-scrapper (CC0-1.0)',
+        desc: '像素游戏/复古风格的限量色板（3–32 色），按点赞排序——低色数约束下的高效配色训练场。',
+        sets: sets.map(s => ({ name: s.name, colors: s.colors, likes: s.likes })),
+      });
+      console.log('lospec: ' + sets.length + ' 套');
+    }
+  }
+}
 /* ---------- 输出 ---------- */
 fs.mkdirSync(path.dirname(OUT), { recursive: true });
 const banner = `/* palettes.js — 由 scratch/transform.js 自动生成
@@ -532,11 +559,11 @@ console.log(`同步输出: ${MCP_OUT}`);
 
 // 同步引擎到网页端（单一来源：colorcat-mcp/engine.js）
 const ENG_SRC = path.join(__dirname, '..', 'colorcat-mcp', 'engine.js');
-const engBody = fs.readFileSync(ENG_SRC, 'utf8').replace(/^export\s+/gm, '');
+let engBody = fs.readFileSync(ENG_SRC, 'utf8').replace(/^export\s+/gm, '');
 const engNames = [...engBody.matchAll(/^(?:function|const|class|let|var)\s+(\w+)/gm)].map(m => m[1]);
+engBody = '(function(){\n\'use strict\';\n' + engBody + '\nwindow.ColorEngine = { ' + engNames.join(', ') + ' };\n})();\n';
 fs.writeFileSync(path.join(__dirname, '..', 'color-hub', 'engine.js'),
-  '/* 由 transform.js 从 colorcat-mcp/engine.js 构建；勿手改 */\n' + engBody +
-  'window.ColorEngine = { ' + engNames.join(', ') + ' };\n');
+  '/* 由 transform.js 从 colorcat-mcp/engine.js 构建（IIFE，避免全局污染）；勿手改 */\n' + engBody);
 console.log('同步输出: color-hub/engine.js (' + engNames.length + ' 导出)');
 const kb = (fs.statSync(OUT).size / 1024).toFixed(1);
 console.log(`palettes.js 写出: ${PALETTES.length} 组色板, ${kb} KB`);
