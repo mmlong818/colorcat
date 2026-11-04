@@ -81,11 +81,15 @@ if (!tree) {
 }
 console.log(`tree: ${tree.sha.slice(0, 10)}`);
 
+/* commit 挂父提交，让远端历史成链（可 review diff） */
+const refNow = await call(`/repos/${REPO}/git/refs/heads/main`);
+const parents = refNow.status === 200 ? [refNow.data.object.sha] : [];
 const { data: commit } = await call(`/repos/${REPO}/git/commits`, 'POST', {
-  message: 'ColorCat: color workbench (125 open-source palettes), MCP server, i18n x5, a11y tools',
+  message: 'docs: rewrite README with verified facts; fix stale counts; HTTP dual-mode transport',
   tree: tree.sha,
+  parents,
 });
-console.log(`commit: ${commit.sha.slice(0, 10)}`);
+console.log(`commit: ${commit.sha.slice(0, 10)} (parents: ${parents.length})`);
 
 const refRes = await call(`/repos/${REPO}/git/refs/heads/main`);
 if (refRes.status === 404) {

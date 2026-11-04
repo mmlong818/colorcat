@@ -246,6 +246,7 @@ function showToast(msg){
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 1600);
 }
+const debounce = (fn, ms = 150) => { let h; return (...a) => { clearTimeout(h); h = setTimeout(() => fn(...a), ms); }; };
 async function copyText(t){
   try { await navigator.clipboard.writeText(t); return true; }
   catch(e){
@@ -298,10 +299,16 @@ const state = {
   lang: detectLang(),
   scaleHex: '#2563EB',     // 色阶工坊基色
   scMode: 'semantic',      // 色阶工坊模式：semantic | contrast
+  auditId: 'tailwind',     // 批量审计选中的色板
   setId: '',               // set 详情内的子搜索词
 };
 const PAL = id => PALETTES.find(p => p.id === id);
 const genHex = () => rgbToHex(...hslToRgb(state.gen.h, state.gen.s, state.gen.l));
+
+function applyThemeLabel(){
+  const btn = document.getElementById('btnTheme');
+  if (btn) btn.textContent = document.documentElement.dataset.theme === 'dark' ? t('theme.toLight') : t('theme.toDark');
+}
 
 /* ================= Tab 切换 ================= */
 function switchTab(tab){
@@ -389,11 +396,11 @@ function routeFromHash(){
 function swatchHtml(hex, opts = {}){
   const ct = state.showContrast ? (() => {
     const cw = contrast(hex, '#FFFFFF'), cb = contrast(hex, '#000000');
-    return `<span class="ct"><span title="与白色的对比度">${t('detail.w')}${cw.toFixed(1)}</span><span title="与黑色的对比度">${t('detail.k')}${cb.toFixed(1)}</span></span>`;
+    return `<span class="ct"><span title="${t('a11y.titleW')}">${t('detail.w')}${cw.toFixed(1)}</span><span title="${t('a11y.titleK')}">${t('detail.k')}${cb.toFixed(1)}</span></span>`;
   })() : '';
   const inner = (opts.name ? `<span class="nm" title="${esc(opts.name)}">${esc(opts.name)}</span>` : '') + `<span class="hx">${hex}</span>` + ct;
   return `<button type="button" class="sw" style="background:${hex};color:${inkOn(hex)}"
-    data-hex="${hex}" title="${hex}${opts.name ? ' · ' + esc(opts.name) : ''} · 点击复制">${inner}</button>`;
+    data-hex="${hex}" title="${hex}${opts.name ? ' · ' + esc(opts.name) : ''} · ${t('lib.copyHint')}" aria-label="${hex}${opts.name ? ' ' + esc(opts.name) : ''} · ${t('lib.copyHint')}">${inner}</button>`;
 }
 function sanitizeTokenName(s){
   return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'x';
@@ -654,7 +661,7 @@ function renderDetail(){
 }
 function bindDetail(p){
   const setSearch = $('#setSearch');
-  if (setSearch) setSearch.addEventListener('input', e => { state.setId = e.target.value; renderDetail(); $('#setSearch').focus(); });
+  if (setSearch) setSearch.addEventListener('input', debounce(e => { state.setId = e.target.value; renderDetail(); const s2 = document.getElementById('setSearch'); if (s2) s2.focus(); }, 200));
   $$('#detail .hue-chip').forEach(b => b.addEventListener('click', () => { state.hueIdx = +b.dataset.hue; renderDetail(); }));
   $$('#detail [data-mode]').forEach(b => b.addEventListener('click', () => { state.mode = b.dataset.mode; renderDetail(); }));
   $$('#detail .brewer-item').forEach(b => b.addEventListener('click', () => {
@@ -922,6 +929,54 @@ function renderCvdStrip(){
     <div><div class="lab">${label}</div>
     <div class="strip">${base.map(h => `<i style="background:${simulate(h, m)}" title="${h} → ${simulate(h, m)}"></i>`).join('')}</div></div>`).join('');
 }
+
+/* ================= 批量对比度审计 ================= */
+function paletteFlatColors(p){
+  if (!p) return [];
+  if (p.kind === 'multiscale') return [...new Set(p.scales.flatMap(s => s.steps))];
+  if (p.colors) return p.colors.map(c => c.hex);
+  if (p.sets) return p.sets.flatMap(s => s.colors);
+  if (p.stops) return p.stops;
+  if (p.kind === 'brewer') return p.schemes.flatMap(s => s.classes[Math.min(...Object.keys(s.classes).map(Number))]);
+  return [];
+}
+function renderAuditSel(){
+  const sel = $('#audSel');
+  if (sel) sel.innerHTML = PALETTES.map(pp =>
+    '<option value="' + pp.id + '"' + (pp.id === state.auditId ? ' selected' : '') + '>' + titleOf(pp) + '</option>').join('');
+}
+function renderAudit(){
+  const bgEl = $('#audBg');
+  const bg = bgEl ? bgEl.value.toUpperCase() : '#FFFFFF';
+  const p = PAL(state.auditId);
+  const fromPalette = paletteFlatColors(p);
+  const customEl = $('#audCustom');
+  const custom = (customEl ? customEl.value : '').split(/[\n,;]+/)
+    .map(s => s.trim()).filter(Boolean).map(c => { const rgb = hexToRgb(c); return rgb ? rgbToHex(...rgb) : null; }).filter(Boolean);
+  const unique = [...new Set([...custom, ...fromPalette])];
+  const capNote = unique.length > 60 ? '<p class="text-mini">' + t('a11y.auditCap', { n: 60 }) + '</p>' : '';
+  const list = unique.slice(0, 60);
+  if (!list.length){
+    if ($('#audOut')) $('#audOut').innerHTML = '<p class="text-mini">' + t('a11y.auditNone') + '</p>';
+    return;
+  }
+  const chip = (label, ok) => '<span class="wcag-pill ' + (ok ? 'pass' : 'fail') + '" style="padding:2px 8px;font-size:11px">' + label + ' ' + (ok ? '✓' : '✗') + '</span>';
+  const rows = list.map(hex => {
+    const rr = contrast(hex, bg);
+    const w = wcagVerdicts(rr);
+    return '<div class="audit-row">' +
+      '<span class="audit-dot" style="background:' + hex + '"></span>' +
+      '<span class="mono audit-hex">' + hex + '</span>' +
+      '<span class="mono audit-ratio">' + rr.toFixed(2) + '</span>' +
+      '<span class="audit-chips">' + chip(t('a11y.aaText'), w.aa_normal) + chip(t('a11y.aaLarge'), w.aa_large) + chip(t('a11y.uiText'), w.ui_components) + '</span>' +
+      '<span class="audit-verdict">' + (w.aa_normal ? t('scale.aaOk') : w.aa_large ? t('scale.aaOnly') : t('scale.fail')) + '</span>' +
+      '</div>';
+  }).join('');
+  const passBody = list.filter(hex => wcagVerdicts(contrast(hex, bg)).aa_normal).length;
+  $('#audOut').innerHTML = capNote + rows +
+    '<p class="text-mini" style="margin-top:8px">' + t('scale.bgRead') + ': ' + bg + ' · ' + t('a11y.aaText') + ': ' + passBody + '/' + list.length + '</p>';
+}
+function renderAuditSelAndOut(){ renderAuditSel(); renderAudit(); }
 
 /* ================= 应用预览 ================= */
 const PV_VALUES = [62, 38, 91, 47, 73, 55, 84, 30];
@@ -1258,6 +1313,31 @@ function renderGradientChecker(){
 
 /* ---------- 色阶工坊：图片取色 ---------- */
 const scCanvas = $('#scCanvas');
+async function loadScaleImageFromBlob(file){
+  if (!file) return;
+  if (!file.type.startsWith('image/')){ showToast(t('toast.needImage')); return; }
+  if (window.createImageBitmap){
+    try {
+      const bmp = await createImageBitmap(file, { imageOrientation: 'from-image' });   // 修正 EXIF 方向
+      loadScaleImageBitmap(bmp);
+      return;
+    } catch(e){ /* 旧浏览器回退到 dataURL 路径 */ }
+  }
+  const reader = new FileReader();
+  reader.onload = ev => loadScaleImageSrc(ev.target.result);
+  reader.readAsDataURL(file);
+}
+function loadScaleImageBitmap(bmp){
+  const maxW = 480, maxH = 340;
+  const scale = Math.min(maxW / bmp.width, maxH / bmp.height, 1);
+  scCanvas.width = Math.max(1, Math.round(bmp.width * scale));
+  scCanvas.height = Math.max(1, Math.round(bmp.height * scale));
+  scCanvas.getContext('2d').drawImage(bmp, 0, 0, scCanvas.width, scCanvas.height);
+  scCanvas.hidden = false;
+  document.getElementById('scDzHint').style.display = 'none';
+  computeScDominant();
+  showToast(t('toast.imgLoaded'));
+}
 function loadScaleImageSrc(src){
   const img = new Image();
   img.onload = () => {
@@ -1312,6 +1392,7 @@ function bind(){
   let saved = null;
   try { saved = localStorage.getItem('hub.theme'); } catch(e){}
   applyTheme(saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+  applyThemeLabel();
 
   /* Tabs */
   $('#navTabs').addEventListener('click', e => {
@@ -1320,7 +1401,7 @@ function bind(){
   });
 
   /* 色板库 */
-  $('#libSearch').addEventListener('input', e => { state.search = e.target.value; renderLibrary(); });
+  $('#libSearch').addEventListener('input', debounce(e => { state.search = e.target.value; renderLibrary(); }, 150));
   $('#catChips').addEventListener('click', e => {
     const c = e.target.closest('.cat-chip');
     if (c){ state.cat = c.dataset.cat; renderLibrary(); }
@@ -1408,6 +1489,29 @@ function bind(){
   });
 
   /* 无障碍 */
+  $('#audBg').addEventListener('input', renderAudit);
+  $('#audSel').addEventListener('change', e => { state.auditId = e.target.value; renderAudit(); });
+  $('#audCustom').addEventListener('input', debounce(renderAudit, 200));
+  $('#btnStarImport').addEventListener('click', () => $('#starImportFile').click());
+  $('#starImportFile').addEventListener('change', e => {
+    const f = e.target.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        const ids = Array.isArray(data) ? data
+          : Array.isArray(data.palettes) ? data.palettes.map(x => typeof x === 'string' ? x : x.id)
+          : [];
+        let n = 0;
+        for (const id of ids){ if (PAL(id) && !starred.has(id)){ starred.add(id); n++; } }
+        saveStars(); renderLibrary();
+        showToast(t('toast.favImported', { n }));
+      } catch(err){ showToast(t('toast.importFail')); }
+    };
+    reader.readAsText(f);
+    e.target.value = '';
+  });
   const rc = () => renderContrast();
   $('#fgColor').addEventListener('input', rc);
   $('#bgColor').addEventListener('input', rc);
@@ -1512,24 +1616,15 @@ function bind(){
   });
   const dz = $('#scDropzone'), fi = $('#scFile');
   dz.addEventListener('click', () => fi.click());
+  dz.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); fi.click(); } });
   fi.addEventListener('change', e => {
-    const f = e.target.files[0];
-    if (f && f.type.startsWith('image/')){
-      const reader = new FileReader();
-      reader.onload = ev => loadScaleImageSrc(ev.target.result);
-      reader.readAsDataURL(f);
-    } else showToast(t('toast.needImage'));
+    loadScaleImageFromBlob(e.target.files[0]);
   });
   dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
   dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
   dz.addEventListener('drop', e => {
     e.preventDefault(); dz.classList.remove('dragover');
-    const f = e.dataTransfer.files[0];
-    if (f && f.type.startsWith('image/')){
-      const reader = new FileReader();
-      reader.onload = ev => loadScaleImageSrc(ev.target.result);
-      reader.readAsDataURL(f);
-    } else showToast(t('toast.needDropImage'));
+    loadScaleImageFromBlob(e.dataTransfer.files[0]);
   });
   scCanvas.addEventListener('click', e => {
     const rect = scCanvas.getBoundingClientRect();
@@ -1594,5 +1689,6 @@ function bind(){
   renderPreview();
   renderScale();
   renderGradientChecker();
+  renderAuditSelAndOut();
   routeFromHash();   // 支持 #/p/tailwind/4 形式的分享链接
 })();

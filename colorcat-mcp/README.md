@@ -16,6 +16,7 @@
 | `generate_scale` | 12 阶语义色阶（基色锚定第 9 阶）/ Leonardo 式对比度目标色阶，附 CSS |
 | `check_gradient` | 渐变亮带检测 + 三类色盲逐段可区分性 |
 | `simulate_vision` | 红盲/绿盲/蓝黄盲/灰度模拟 |
+| `audit_contrast` | 批量对比度审计：一批颜色对给定背景逐个判定正文/大字/UI 三档 |
 | `preview_roles` | 色板 → 界面角色映射（bg/surface/border/text/accent + 分类色 + ramp） |
 
 ## 接入 ZCode

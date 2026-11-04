@@ -44,7 +44,9 @@
     <div class="toolbar">
       <input type="search" id="libSearch" class="text-input grow" data-i18n-ph="lib.searchPh" placeholder="搜索色板名称，如 tailwind / 传统色 / nord…" aria-label="搜索色板">
       <div id="catChips" class="hue-chips" role="group" aria-label="按类别筛选" style="margin:0"></div>
-      <button id="btnStarExport" class="btn" type="button" hidden title="导出全部收藏色板的 JSON">导出收藏夹</button>
+      <button id="btnStarExport" class="btn" type="button" hidden title="导出全部收藏色板的 JSON" data-i18n="lib.exportFav">导出收藏夹</button>
+      <button id="btnStarImport" class="btn" type="button" data-i18n="lib.importFav">导入收藏</button>
+      <input type="file" id="starImportFile" accept=".json,application/json" hidden>
     </div>
     <div id="detail" class="panel" aria-live="polite"></div>
     <div id="libGrid" class="lib-grid"></div>
@@ -81,7 +83,7 @@
         </div>
 
         <h2 style="margin-top:20px" data-i18n="scale.h2">② 从图片提取颜色（可选）</h2>
-        <div id="scDropzone" class="dropzone">
+        <div id="scDropzone" class="dropzone" role="button" tabindex="0" aria-label="上传图片">
           <p id="scDzHint"><span data-i18n="scale.dzHint1">点击上传图片，或把图片拖到这里</span><br><span class="text-mini" data-i18n="scale.dzHint2">加载后点击画面任意位置取色，自动生成新色阶</span></p>
           <canvas id="scCanvas" hidden></canvas>
           <input type="file" id="scFile" accept="image/*" hidden>
@@ -176,6 +178,19 @@
       <p class="text-mini" data-i18n="a11y.cvdHint">同一组示例色（取自当前色板库第一个 UI 色板）在各类色觉下的呈现。用它可以快速判断你的配色方案是否「撞色」。</p>
       <div class="cvd-strip" id="cvdStrip"></div>
     </div>
+
+    <div class="panel">
+      <h2 data-i18n="a11y.auditTitle">批量对比度审计</h2>
+      <p class="text-mini" data-i18n="a11y.auditHint">选一个背景色和一批颜色（来自色板或自定义），逐个判定正文 / 大字 / UI 三档是否达标——快速找出整套色阶里哪些能当文字色。</p>
+      <div class="controls">
+        <label class="text-mini"><span data-i18n="a11y.bgC">背景</span><input type="color" id="audBg" class="chip" value="#FFFFFF" aria-label="背景色"></label>
+        <label class="text-mini"><span data-i18n="a11y.auditPalette">从色板</span>
+          <select id="audSel" class="text-input" aria-label="审计色板"></select>
+        </label>
+      </div>
+      <textarea id="audCustom" class="text-input" style="width:100%;min-height:52px" data-i18n-ph="a11y.auditCustom" placeholder="#FF0000（每行一个，可选）" aria-label="自定义颜色"></textarea>
+      <div id="audOut" aria-live="polite" style="margin-top:10px"></div>
+    </div>
   </section>
 
   <!-- ========== 应用预览 ========== -->
@@ -237,6 +252,6 @@
 
 <script src="i18n.js?v=20261107"></script>
 <script src="palettes.js?v=20261107"></script>
-<script src="app.js?v=20261109"></script>
+<script src="app.js?v=20261110"></script>
 </body>
 </html>

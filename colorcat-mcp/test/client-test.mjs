@@ -31,8 +31,8 @@ const call = async (tool, args) => {
 /* 1. 工具清单 */
 const tools = await client.listTools();
 console.log(`\n[1] 工具清单：${tools.tools.length} 个`);
-check('工具数量 = 10', tools.tools.length === 10, `实际 ${tools.tools.length}`);
-check('含核心工具', ['search_palettes','get_palette','convert_color','contrast_check','suggest_fix','generate_scale','check_gradient','simulate_vision','preview_roles','get_brewer_classes'].every(n => tools.tools.some(t => t.name === n)));
+check('工具数量 = 11', tools.tools.length === 11, `实际 ${tools.tools.length}`);
+check('含核心工具', ['search_palettes','get_palette','convert_color','contrast_check','suggest_fix','generate_scale','check_gradient','simulate_vision','preview_roles','get_brewer_classes','audit_contrast'].every(n => tools.tools.some(t => t.name === n)));
 
 /* 2. search_palettes */
 console.log('\n[2] search_palettes');
@@ -125,6 +125,15 @@ console.log('\n[9] check_gradient');
   check('捕获 CVD 警告（蓝紫段）', r.warnings?.some(w => w.includes('不可区分')), JSON.stringify(r.warnings));
   const r2 = await call('check_gradient', { colors: ['#000000', '#FFFFFF'] });
   check('黑白渐变通过', r2.ok === true, JSON.stringify(r2.warnings));
+}
+
+/* 9b. audit_contrast */
+{
+  const r = await call('audit_contrast', { bg: '#FFFFFF', colors: ['#000000', '#888888', 'zzz'] });
+  check('audit 3 行（含 1 解析失败）', r.rows?.length === 3 && r.rows[2].error === 'unparsed', JSON.stringify(r.rows?.[2]));
+  check('#000000 正文AA 过 (21:1)', r.rows?.[0].bodyAA === true && r.rows?.[0].ratio === 21, JSON.stringify(r.rows?.[0]));
+  check('#888888 仅大字/UI 过', r.rows?.[1].bodyAA === false && r.rows?.[1].largeAA === true && r.rows?.[1].uiComponent === true, JSON.stringify(r.rows?.[1]));
+  check('passBodyAA 计数 = 1', r.passBodyAA === 1);
 }
 
 /* 10. simulate_vision */

@@ -226,6 +226,31 @@ server.registerTool('check_gradient', {
   return res.error ? err(res.error) : ok(res);
 });
 
+/* ---------- 7b. audit_contrast ---------- */
+server.registerTool('audit_contrast', {
+  title: '批量对比度审计',
+  description: '对一批颜色逐个判定 WCAG 三档（正文 AA ≥4.5、大字 AA ≥3、UI 组件 ≥3）在给定背景下的达标情况——用于快速找出整套色阶里哪些能当文字色。',
+  inputSchema: {
+    bg: z.string().describe('背景色'),
+    colors: z.array(z.string()).min(1).max(60).describe('待审计的颜色列表，最多 60 个'),
+  },
+}, async ({ bg, colors }) => {
+  const b = E.parseColor(bg);
+  if (!b) return err();
+  const rows = colors.map(c => {
+    const h = E.parseColor(c);
+    if (!h) return { input: c, error: 'unparsed' };
+    const r = E.contrast(h, b);
+    const w = E.wcagVerdicts(r);
+    return { hex: h, ratio: +r.toFixed(2), bodyAA: w.aa_normal, largeAA: w.aa_large, uiComponent: w.ui_components };
+  });
+  return ok({
+    bg: b, count: rows.length,
+    passBodyAA: rows.filter(x => x.bodyAA).length,
+    rows,
+  });
+});
+
 /* ---------- 8. simulate_vision ---------- */
 server.registerTool('simulate_vision', {
   title: '色觉模拟',
@@ -277,7 +302,7 @@ async function startHttp(port){
   app.get('/', (req, res) => res.json({
     name: 'colorcat', version: '1.0.0', transport: 'streamable-http',
     endpoint: '/mcp', auth: process.env.COLORCAT_TOKEN ? 'Bearer token required' : 'open',
-    tools: 10,
+    tools: 11,
   }));
   app.use('/mcp', (req, res, next) => {
     if (!authOk(req)) return res.status(401).json({ jsonrpc: '2.0', error: { code: -32001, message: 'unauthorized: send header Authorization: Bearer <COLORCAT_TOKEN>' } });
