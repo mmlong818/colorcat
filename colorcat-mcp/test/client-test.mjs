@@ -31,8 +31,8 @@ const call = async (tool, args) => {
 /* 1. 工具清单 */
 const tools = await client.listTools();
 console.log(`\n[1] 工具清单：${tools.tools.length} 个`);
-check('工具数量 = 11', tools.tools.length === 11, `实际 ${tools.tools.length}`);
-check('含核心工具', ['search_palettes','get_palette','convert_color','contrast_check','suggest_fix','generate_scale','check_gradient','simulate_vision','preview_roles','get_brewer_classes','audit_contrast'].every(n => tools.tools.some(t => t.name === n)));
+check('工具数量 = 12', tools.tools.length === 12, `实际 ${tools.tools.length}`);
+check('含核心工具', ['search_palettes','get_palette','convert_color','contrast_check','suggest_fix','generate_scale','check_gradient','simulate_vision','preview_roles','get_brewer_classes','audit_contrast','generate_m3'].every(n => tools.tools.some(t => t.name === n)));
 
 /* 2. search_palettes */
 console.log('\n[2] search_palettes');
@@ -125,6 +125,18 @@ console.log('\n[9] check_gradient');
   check('捕获 CVD 警告（蓝紫段）', r.warnings?.some(w => w.includes('不可区分')), JSON.stringify(r.warnings));
   const r2 = await call('check_gradient', { colors: ['#000000', '#FFFFFF'] });
   check('黑白渐变通过', r2.ok === true, JSON.stringify(r2.warnings));
+}
+
+/* 9a2. generate_m3 */
+{
+  const r = await call('generate_m3', { source: '#6750A4' });
+  const p40 = r.palettes?.primary?.find(x => x.tone === 40);
+  check('M3 primary tone40 精确往返 #6750A4', p40?.hex === '#6750A4', JSON.stringify(p40));
+  check('M3 tone100 = #FFFFFF', r.palettes?.primary?.find(x => x.tone === 100)?.hex === '#FFFFFF');
+  check('M3 light.primary = #6750A4', r.scheme?.light?.primary === '#6750A4', r.scheme?.light?.primary);
+  check('M3 dark.primary = tone80', typeof r.scheme?.dark?.primary === 'string' && /^#[0-9A-F]{6}$/.test(r.scheme.dark.primary));
+  const bad = await call('generate_m3', { source: 'zzz' });
+  check('非法颜色报错', bad.isError === true);
 }
 
 /* 9b. audit_contrast */

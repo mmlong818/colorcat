@@ -59,7 +59,8 @@
         <h2 data-i18n="scale.h1">① 基色与模式</h2>
         <div class="hue-chips" id="scMode" role="group" aria-label="生成模式">
           <button type="button" class="cat-chip active" data-mode="semantic"="scale.modeSemantic">语义色阶模式</button>
-          <button type="button" class="cat-chip" data-mode="contrast"="scale.modeContrast">对比度目标模式</button>
+          <button type="button" class="cat-chip" data-mode="contrast" data-i18n="scale.modeContrast">对比度目标模式</button>
+          <button type="button" class="cat-chip" data-mode="m3" data-i18n="scale.modeM3">M3 主题生成（HCT）</button>
         </div>
         <div class="controls" style="margin-top:10px">
           <input type="color" id="scColorChip" class="chip" aria-label="拾色器">
@@ -250,8 +251,9 @@
 
 <div id="toast" role="status" aria-live="polite"></div>
 
+<script src="hct.js?v=20261112"></script>
 <script src="i18n.js?v=20261107"></script>
 <script src="palettes.js?v=20261107"></script>
-<script src="app.js?v=20261110"></script>
+<script src="app.js?v=20261112"></script>
 </body>
 </html>

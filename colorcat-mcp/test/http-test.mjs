@@ -47,7 +47,7 @@ try {
   const client = new Client({ name: 'http-test', version: '0.0.1' });
   await client.connect(transport);
   const tools = await client.listTools();
-  check('listTools = 11', tools.tools.length === 11, String(tools.tools.length));
+  check('listTools = 12', tools.tools.length === 12, String(tools.tools.length));
   const r = await client.callTool({ name: 'contrast_check', arguments: { fg: '#FFFFFF', bg: '#2563EB' } });
   const parsed = JSON.parse(r.content[0].text);
   check('contrast_check 5.17', parsed.ratio === 5.17, JSON.stringify(parsed.ratio));

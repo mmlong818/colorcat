@@ -69,7 +69,7 @@ Claude Desktop（`claude_desktop_config.json`）结构略有不同，注意键�
 }
 ```
 
-11 个工具 + 双传输模式（stdio / Streamable HTTP）：`search_palettes` · `get_palette` · `get_brewer_classes` · `convert_color` · `contrast_check` · `suggest_fix` · `generate_scale` · `check_gradient` · `simulate_vision` · `preview_roles` · `audit_contrast`（批量对比度审计）。
+12 个工具 + 双传输模式（stdio / Streamable HTTP）：`search_palettes` · `get_palette` · `get_brewer_classes` · `convert_color` · `contrast_check` · `suggest_fix` · `generate_scale` · `check_gradient` · `simulate_vision` · `preview_roles` · `audit_contrast`（批量对比度审计）· `generate_m3`（品牌色 → Material 3 动态主题，官方 HCT 引擎）。
 
 ### 3. 重新生成数据
 
