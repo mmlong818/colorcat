@@ -31,8 +31,8 @@ const call = async (tool, args) => {
 /* 1. 工具清单 */
 const tools = await client.listTools();
 console.log(`\n[1] 工具清单：${tools.tools.length} 个`);
-check('工具数量 = 13', tools.tools.length === 13, `实际 ${tools.tools.length}`);
-check('含核心工具', ['search_palettes','get_palette','convert_color','contrast_check','suggest_fix','generate_scale','check_gradient','simulate_vision','preview_roles','get_brewer_classes','audit_contrast','generate_m3','sample_colormap'].every(n => tools.tools.some(t => t.name === n)));
+check('工具数量 = 14', tools.tools.length === 14, `实际 ${tools.tools.length}`);
+check('含核心工具', ['search_palettes','get_palette','convert_color','contrast_check','suggest_fix','generate_scale','check_gradient','simulate_vision','preview_roles','get_brewer_classes','audit_contrast','generate_m3','sample_colormap','multi_harmony'].every(n => tools.tools.some(t => t.name === n)));
 
 /* 2. search_palettes */
 console.log('\n[2] search_palettes');
@@ -156,6 +156,15 @@ console.log('\n[9] check_gradient');
   check('附 CSS gradient', typeof r.gradientCss === 'string' && r.gradientCss.startsWith('linear-gradient'));
   const bad = await call('sample_colormap', { paletteId: 'tailwind' });
   check('非色图报错', bad.isError === true);
+}
+
+/* 9d. multi_harmony */
+{
+  const r = await call('multi_harmony', { bases: ['#2563EB', '#D95A2B'], scheme: 'complementary' });
+  check('双基色互补展开 ≥4 色', r.colors?.length >= 4, JSON.stringify(r.colors?.length));
+  check('4 色互补对', r.colors?.length === 4 && new Set(r.colors.map(c=>c.hex)).size === 4);
+  const bad = await call('multi_harmony', { bases: ['#2563EB'], scheme: 'complementary' });
+  check('单基色报错', bad.isError === true);
 }
 
 /* 10. simulate_vision */

@@ -63,6 +63,14 @@ function applyStaticI18n(){
   if (sel) sel.innerHTML = I18N_LOCALES.map(([code, name]) =>
     `<option value="${code}" ${code === state.lang ? 'selected' : ''}>${name}</option>`).join('');
 }
+function dbNameLine(h, s, l){
+  const dbName = nearestDbName(rgbToHex(...hslToRgb(h, s, l)));
+  return dbName ? dbName.name + (dbName.exact ? t('names.exactSuffix') : '') : hueName(h, s, l);
+}
+function dbNameLine(h, s, l){
+  const dbName = nearestDbName(rgbToHex(...hslToRgb(h, s, l)));
+  return dbName ? dbName.name + (dbName.exact ? ' ' + t('names.exactSuffix') : '') : hueName(h, s, l);
+}
 function applyThemeLabel(){
   $('#btnTheme').textContent = document.documentElement.dataset.theme === 'dark' ? t('theme.toLight') : t('theme.toDark');
 }
@@ -103,6 +111,21 @@ function download(name, content, mime){
   a.download = name; a.href = URL.createObjectURL(blob); a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 3000);
 }
+/* ================= 色名库最近名 ================= */
+const COLOR_DB = window.COLOR_NAMES || [];
+function nearestDbName(hex){
+  const rgb = hexToRgb(hex);
+  if (!rgb || !COLOR_DB.length) return null;
+  let best = null, bd = Infinity;
+  for (const item of COLOR_DB){
+    const c = hexToRgb(item.hex);
+    const d = Math.pow(rgb[0]-c[0],2)*2 + Math.pow(rgb[1]-c[1],2)*4 + Math.pow(rgb[2]-c[2],2);
+    if (d < bd){ bd = d; best = item; }
+  }
+  if (!best) return null;
+  return { name: best.names[0], alt: best.names.slice(1, 3), exact: bd === 0 };
+}
+
 /* ================= 全局状态 ================= */
 const CATS = [
   { id: 'all' }, { id: 'starred' }, { id: 'ui' }, { id: 'viz' }, { id: 'curated' }, { id: 'pixel' }, { id: 'editor' }, { id: 'traditional' },
@@ -137,6 +160,14 @@ const state = {
 const PAL = id => PALETTES.find(p => p.id === id);
 const genHex = () => rgbToHex(...hslToRgb(state.gen.h, state.gen.s, state.gen.l));
 
+function dbNameLine(h, s, l){
+  const dbName = nearestDbName(rgbToHex(...hslToRgb(h, s, l)));
+  return dbName ? dbName.name + (dbName.exact ? t('names.exactSuffix') : '') : hueName(h, s, l);
+}
+function dbNameLine(h, s, l){
+  const dbName = nearestDbName(rgbToHex(...hslToRgb(h, s, l)));
+  return dbName ? dbName.name + (dbName.exact ? ' ' + t('names.exactSuffix') : '') : hueName(h, s, l);
+}
 function applyThemeLabel(){
   const btn = document.getElementById('btnTheme');
   if (btn) btn.textContent = document.documentElement.dataset.theme === 'dark' ? t('theme.toLight') : t('theme.toDark');
@@ -295,6 +326,56 @@ function tailwindV4Of(p){
 const licTag = p => p.license.split('（')[0].split(' (')[0].trim();
 const needsCite = p => /^sci-|^colorbrewer/.test(p.id);
 const exportHead = p => `/* ${p.cn} · ${licTag(p)}${needsCite(p) ? ' · ' + p.attribution.replace(/^©\s*/, '© ') : ''} */`;
+function paletteCardPNG(p){
+  let cols = [], title = p.cn, subtitle = '';
+  if (p.kind === 'multiscale'){
+    const hue = p.scales[Math.min(state.hueIdx, p.scales.length - 1)];
+    cols = hue.steps; subtitle = hue.cnName || hue.name;
+  } else if (p.kind === 'palette'){
+    cols = p.colors.map(c => ({ hex: c.hex, name: c.name }));
+  } else if (p.kind === 'brewer'){
+    const sch = p.schemes[state.brewerScheme];
+    const nums = Object.keys(sch.classes).map(Number).sort((a, b) => a - b);
+    cols = (sch.classes[state.brewerClass] || sch.classes[nums[0]]).map((h, i) => ({ hex: h, name: String(i + 1) }));
+    subtitle = sch.name + ' · ' + state.brewerClass + ' classes';
+  } else if (p.kind === 'map'){
+    cols = p.stops;
+  } else if (p.kind === 'set' || p.kind === 'gradset'){
+    cols = (p.sets[Math.min(state.setIdx || 0, p.sets.length - 1)] || { colors: [] }).colors
+      .map(c => typeof c === 'string' ? c : c.hex);
+  }
+  cols = cols.map(c => typeof c === 'string' ? { hex: c, name: '' } : c).slice(0, 40);
+  if (!cols.length) return;
+  const cell = 150, labelH = 34, perRow = 6;
+  const rowsN = Math.ceil(cols.length / perRow);
+  const W = 1240, headH = 190, gridH = rowsN * (cell + labelH + 14) + 40, H = headH + gridH + 70;
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const ctx = cv.getContext('2d');
+  ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#111111'; ctx.font = '600 40px -apple-system,"Segoe UI","Microsoft YaHei",sans-serif';
+  ctx.fillText(title, 64, 100);
+  ctx.fillStyle = '#666666'; ctx.font = '20px -apple-system,"Segoe UI","Microsoft YaHei",sans-serif';
+  ctx.fillText(subtitle || p.license, 64, 140);
+  ctx.font = '18px -apple-system,"Segoe UI",sans-serif';
+  ctx.fillText(p.attribution.slice(0, 90), 64, 172);
+  cols.forEach((c, i) => {
+    const r = Math.floor(i / perRow), col = i % perRow;
+    const x = 64 + col * (cell + 14), y = headH + 20 + r * (cell + labelH + 14);
+    const rgb = hexToRgb(c.hex) || [0, 0, 0];
+    ctx.fillStyle = c.hex; ctx.fillRect(x, y, cell, cell);
+    ctx.fillStyle = lum(...rgb) > 140 ? 'rgba(0,0,0,.55)' : 'rgba(255,255,255,.9)';
+    ctx.font = '600 22px ui-monospace,Consolas,monospace';
+    ctx.fillText(c.hex.replace('#', ''), x + 12, y + cell - 40);
+    if (c.name){ ctx.font = '16px -apple-system,"Segoe UI",sans-serif'; ctx.fillText(c.name.slice(0, 14), x + 12, y + cell - 14); }
+  });
+  ctx.fillStyle = '#999999'; ctx.textAlign = 'center';
+  ctx.font = '16px -apple-system,"Segoe UI",sans-serif';
+  ctx.fillText('ColorCat · 基于开源数据的配色工作台', W / 2, H - 24);
+  const a = document.createElement('a');
+  a.download = p.id + '-card.png';
+  a.href = cv.toDataURL('image/png');
+  a.click();
+}
 function exportText(p, fmt){
   if (fmt === 'json'){
     return JSON.stringify({
@@ -452,6 +533,7 @@ function renderDetail(){
       <button type="button" class="btn btn-sm btn-primary" id="btnApplyPreview">${t('btn.applyPreview')}</button>
       <button type="button" class="btn btn-sm${starred.has(p.id) ? ' on' : ''}" id="btnStar" title="${starred.has(p.id) ? t('lib.unstar') : t('lib.star')}">${starred.has(p.id) ? t('btn.unfav') : t('btn.fav')}</button>
       ${fmts.map(([v, l]) => `<button type="button" class="btn btn-sm" data-fmt="${v}">${l}</button>`).join('')}
+      <button type="button" class="btn btn-sm" id="btnCardPng" title="生成色卡图 PNG">${t('btn.card')}</button>
     </div>
     ${body}
     <div class="export-area" id="exportArea" hidden>
@@ -462,6 +544,10 @@ function renderDetail(){
       </div>
     </div>`;
   $('#btnBack').addEventListener('click', closeDetail);
+  $('#btnCardPng')?.addEventListener('click', () => {
+    paletteCardPNG(p);
+    showToast(t('toast.exported', { file: p.id + '-card.png' }));
+  });
   $('#btnStar').addEventListener('click', () => { toggleStar(p.id); renderDetail(); renderLibrary(); });
   $('#btnApplyPreview').addEventListener('click', () => {
     state.pv.id = p.id; state.pv.hue = state.hueIdx || state.pv.hue;
@@ -608,6 +694,7 @@ function renderGenInfo(){
     ['HEX', hex], ['RGB', `rgb(${rgb.join(', ')})`], ['HSL', `hsl(${state.gen.h}, ${state.gen.s}%, ${state.gen.l}%)`],
     ['HSV', `hsv(${hsvH}, ${hsvS}%, ${hsvV}%)`], ['CMYK', `cmyk(${c}%, ${m}%, ${y}%, ${k}%)`],
     ['L*a*b*', `lab(${L}, ${A}, ${B})`], [t('gen.nearest'), hueName(state.gen.h, state.gen.s, state.gen.l)],
+    [t('names.db'), dbNameLine(state.gen.h, state.gen.s, state.gen.l)],
   ];
   $('#genInfoRows').innerHTML = rows.map(([k2, v]) =>
     `<div class="info-row" data-copy="${v}"><span class="info-key">${k2}</span><span class="info-val">${v}</span></div>`).join('');
@@ -747,7 +834,7 @@ function renderConv(){
   const rows = [
     ['HEX', hex], ['RGB', `rgb(${rgb.join(', ')})`], ['HSL', `hsl(${h}, ${s}%, ${l}%)`],
     ['HSV/HSB', `hsv(${h2}, ${s2}%, ${v}%)`], ['CMYK', `cmyk(${c}%, ${m}%, ${y}%, ${k}%)`],
-    ['L*a*b* (D65)', `lab(${L}, ${A}, ${B})`], ['最近色名', hueName(h, s, l)],
+    ['L*a*b* (D65)', `lab(${L}, ${A}, ${B})`], [t('names.db'), dbNameLine(h, s, l)], [t('gen.nearest'), hueName(h, s, l)],
   ];
   $('#convRows').innerHTML = rows.map(([k2, v2]) =>
     `<div class="info-row" data-copy="${v2}"><span class="info-key">${k2}</span><span class="info-val">${v2}</span></div>`).join('');
@@ -936,6 +1023,23 @@ function buildPreviewModel(pId, hueIdx, setIdx){
     note = '该类型暂无专属预览模型，显示兜底样式。';
   }
   return { p, roles: T(roles), cat: T(cat), seqFn: t => S(seqFn(t)), note };
+}
+function renderMh(){
+  const bases = ['#mh1', '#mh2', '#mh3']
+    .map(s => { const el = $(s); const rgb = el ? hexToRgb(el.value) : null; return rgb ? rgbToHex(...rgb) : null; })
+    .filter(Boolean);
+  const sch = GEN_SCHEMES.find(s => s.id === $('#mhScheme').value) || GEN_SCHEMES[1];
+  if (bases.length < 2){ $('#mhOut').innerHTML = '<p class="text-mini">' + t('mh.need2') + '</p>'; return; }
+  const seen = [], rows = [];
+  for (const b of bases){
+    const [h, s, l] = rgbToHsl(...hexToRgb(b));
+    for (const [hh, ss, ll] of sch.sw(norm(h), s, l)){
+      const hx = rgbToHex(...hslToRgb(hh, ss, ll));
+      if (!seen.includes(hx)){ seen.push(hx); rows.push(hx); }
+    }
+  }
+  $('#mhOut').innerHTML = '<div class="sw-grid">' + rows.map(h => swatchHtml(h)).join('') + '</div>' +
+    '<p class="text-mini" style="margin-top:8px">' + t('mh.done', { n: rows.length, bases: bases.join(' / ') }) + '</p>';
 }
 function renderPreviewSelect(){
   const opts = sel => PALETTES.map(p => `<option value="${p.id}" ${p.id === sel ? 'selected' : ''}>${titleOf(p)}</option>`).join('');
@@ -1351,6 +1455,9 @@ function bind(){
     tryGenHex(sw.dataset.hex, true);
     showToast(t('toast.baseUpdated', { hex: sw.dataset.hex }));
   });
+  $('#mhScheme').addEventListener('change', renderMh);
+  ['#mh1', '#mh2', '#mh3'].forEach(id => $('#' + id).addEventListener('input', renderMh));
+  $('#btnMh').addEventListener('click', renderMh);
   $('#genInfoRows').addEventListener('click', async e => {
     const row = e.target.closest('.info-row');
     if (!row) return;
@@ -1552,6 +1659,8 @@ function bind(){
   $('#genHex').value = hx; $('#genColorChip').value = hx;
   selectGenScheme(state.gen.wheelScheme);
   setGenBase(state.gen.h, state.gen.s, state.gen.l, true);
+  $('#mhScheme').innerHTML = GEN_SCHEMES.map(s => `<option value="${s.id}">${t('scheme.' + s.id + '.n')}</option>`).join('');
+  renderMh();
   renderContrast();
   renderConv();
   renderCvdStrip();

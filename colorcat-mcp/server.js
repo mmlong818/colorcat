@@ -335,6 +335,43 @@ server.registerTool('sample_colormap', {
   });
 });
 
+/* ---------- 7d. multi_harmony ---------- */
+server.registerTool('multi_harmony', {
+  title: '多色和谐配色',
+  description: '给 2–5 个基色 + 一个和谐方案（analogous/complementary/split/triadic/square/tetradic/pentadic/hexadic/rainbow），对每个基色整套展开关系色并合并去重——用于多品牌/多主体界面的统一配色。返回去重后的联合色板。',
+  inputSchema: {
+    bases: z.array(z.string()).min(2).max(5).describe('基色列表（2-5 个）'),
+    scheme: z.enum(['mono','analogous','complementary','split','triadic','square','tetradic','pentadic','hexadic','rainbow']).describe('和谐方案'),
+  },
+}, async ({ bases, scheme }) => {
+  const OFFSETS = {
+    mono:[0], analogous:[-60,-30,0,30,60], complementary:[0,180],
+    split:[0,150,210], triadic:[0,120,240], square:[0,90,180,270],
+    tetradic:[0,60,180,240], pentadic:[0,72,144,216,288],
+    hexadic:[0,60,120,180,240,300], rainbow:[0,45,90,135,180,225,270,315],
+  };
+  const offs = OFFSETS[scheme];
+  if (!offs) return err('未知方案: ' + scheme);
+  const norm = h => ((h % 360) + 360) % 360;
+  const seen = new Set(), out = [];
+  const basesNorm = bases.map(b => {
+    const rgb = E.hexToRgb(b);
+    if (!rgb) return null;
+    const hsl = E.rgbToHsl(...rgb);
+    return { hex: E.rgbToHex(...rgb), hsl };
+  }).filter(Boolean);
+  if (basesNorm.length < 2) return err('至少需要 2 个有效基色');
+  for (const base of basesNorm){
+    for (const off of offs){
+      const hh = norm(base.hsl[0] + off);
+      const rgb = E.hslToRgb(hh, base.hsl[1], base.hsl[2]);
+      const hex = E.rgbToHex(...rgb);
+      if (!seen.has(hex)){ seen.add(hex); out.push({ hex, from: base.hex }); }
+    }
+  }
+  return ok({ scheme, baseCount: basesNorm.length, bases: basesNorm.map(b=>b.hex), colors: out, count: out.length });
+});
+
 /* ---------- 8. simulate_vision ---------- */
 server.registerTool('simulate_vision', {
   title: '色觉模拟',

@@ -6,7 +6,7 @@
 <title>全能配色工作台 ColorCat · 127 组开源色板 + 色阶工坊 + 无障碍实验室</title>
 <meta name="description" content="整合 Open Color、Tailwind、Ant Design、Radix、ColorBrewer、Viridis、科学色图、Nord、Catppuccin、Dracula、Solarized 与中日传统色的配色工作台：色板库、11 种配色生成器、对比度检查、色盲模拟、多格式导出。">
 <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="10" cy="10" r="7" fill="%23e5484d"/><circle cx="22" cy="10" r="7" fill="%23eacb2c"/><circle cx="10" cy="22" r="7" fill="%232f80ed"/><circle cx="22" cy="22" r="7" fill="%2312a594"/></svg>'>
-<link rel="stylesheet" href="style.css?v=20261114">
+<link rel="stylesheet" href="style.css?v=20261116">
 </head>
 <body>
 
@@ -145,6 +145,19 @@
         </div>
       </div>
     </div>
+    <div class="panel">
+      <h2 data-i18n="mh.h">多色和谐配色</h2>
+      <p class="text-mini" data-i18n="mh.hint">输入 2–3 个基色，选择和谐方案：每个基色的整套关系色合并去重——适合多主体/多品牌界面的统一配色。</p>
+      <div class="controls">
+        <input type="color" id="mh1" class="chip" value="#2563EB" aria-label="基色 1">
+        <input type="color" id="mh2" class="chip" value="#D95A2B" aria-label="基色 2">
+        <input type="color" id="mh3" class="chip" value="#0E9F6E" aria-label="基色 3">
+        <select id="mhScheme" class="text-input" aria-label="和谐方案"></select>
+        <button id="btnMh" class="btn btn-primary" type="button" data-i18n="mh.gen">生成联合配色</button>
+      </div>
+      <div id="mhOut" aria-live="polite"></div>
+    </div>
+
     <section id="genSchemeGrid" class="scheme-grid" aria-live="polite"></section>
   </section>
 
@@ -252,10 +265,11 @@
 <div id="toast" role="status" aria-live="polite"></div>
 <script>window.__errs=[];window.addEventListener("error",function(e){window.__errs.push((e.message||"?")+" @"+(e.lineno||"?"));});</script>
 
-<script src="hct.js?v=20261112"></script>
-<script src="i18n.js?v=20261114"></script>
-<script src="engine.js?v=20261114"></script>
-<script src="palettes.js?v=20261114"></script>
-<script src="app.js?v=20261114"></script>
+<script src="hct.js?v=20261116"></script>
+<script src="color-names.js?v=20261116"></script>
+<script src="i18n.js?v=20261116"></script>
+<script src="engine.js?v=20261116"></script>
+<script src="palettes.js?v=20261116"></script>
+<script src="app.js?v=20261116"></script>
 </body>
 </html>
