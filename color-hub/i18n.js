@@ -1,10 +1,10 @@
-/* i18n.js — OmniPalette 多语言词典（zh 源语言；fr/ru/ja 的色板描述回退英文） */
+/* i18n.js — ColorCat 多语言词典（zh 源语言；fr/ru/ja 的色板描述回退英文） */
 window.I18N_LOCALES = [['zh', '中文'], ['en', 'English'], ['fr', 'Français'], ['ru', 'Русский'], ['ja', '日本語']];
 
 window.I18N = {
 /* ================= 中文 ================= */
 zh: {
-  'app.title': '全能配色工作台 OmniPalette · 125 组开源色板 + 生成器 + 无障碍工具',
+  'app.title': '全能配色工作台 ColorCat · 125 组开源色板 + 生成器 + 无障碍工具',
   'nav.library': '色板库', 'nav.scale': '色阶工坊', 'nav.generator': '配色生成器', 'nav.a11y': '无障碍实验室', 'nav.preview': '应用预览',
   'theme.toDark': '深色', 'theme.toLight': '浅色',
   'hero.title': '把好颜色，都装进一个工作台',
@@ -171,7 +171,7 @@ zh: {
 
 /* ================= English ================= */
 en: {
-  'app.title': 'OmniPalette · 125 open-source palettes + generator + accessibility lab',
+  'app.title': 'ColorCat · 125 open-source palettes + generator + accessibility lab',
   'nav.library': 'Library', 'nav.scale': 'Scale Studio', 'nav.generator': 'Generator', 'nav.a11y': 'A11y Lab', 'nav.preview': 'Preview',
   'theme.toDark': 'Dark', 'theme.toLight': 'Light',
   'hero.title': 'Every good color, in one workbench',
@@ -351,7 +351,7 @@ en: {
 
 /* ================= Français ================= */
 fr: {
-  'app.title': 'OmniPalette · 125 palettes open-source + générateur + labo d\u2019accessibilité',
+  'app.title': 'ColorCat · 125 palettes open-source + générateur + labo d\u2019accessibilité',
   'nav.library': 'Bibliothèque', 'nav.scale': 'Atelier d\u2019échelles', 'nav.generator': 'Générateur', 'nav.a11y': 'Labo a11y', 'nav.preview': 'Aperçu',
   'theme.toDark': 'Sombre', 'theme.toLight': 'Clair',
   'hero.title': 'Toutes les belles couleurs, dans un seul atelier',
@@ -513,7 +513,7 @@ fr: {
 
 /* ================= Русский ================= */
 ru: {
-  'app.title': 'OmniPalette · 125 открытых палитр + генератор + лаборатория доступности',
+  'app.title': 'ColorCat · 125 открытых палитр + генератор + лаборатория доступности',
   'nav.library': 'Библиотека', 'nav.scale': 'Мастерская шкал', 'nav.generator': 'Генератор', 'nav.a11y': 'Лаб. доступности', 'nav.preview': 'Предпросмотр',
   'theme.toDark': 'Тёмная', 'theme.toLight': 'Светлая',
   'hero.title': 'Все хорошие цвета — в одной мастерской',
@@ -675,7 +675,7 @@ ru: {
 
 /* ================= 日本語 ================= */
 ja: {
-  'app.title': 'OmniPalette · 125 のオープンソースパレット + ジェネレーター + アクセシビリティ',
+  'app.title': 'ColorCat · 125 のオープンソースパレット + ジェネレーター + アクセシビリティ',
   'nav.library': 'ライブラリ', 'nav.scale': 'スケール工房', 'nav.generator': 'ジェネレーター', 'nav.a11y': 'アクセシビリティ', 'nav.preview': 'プレビュー',
   'theme.toDark': 'ダーク', 'theme.toLight': 'ライト',
   'hero.title': 'いい色を、ひとつのワークスペースに',

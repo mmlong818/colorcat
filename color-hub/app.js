@@ -309,7 +309,7 @@ function exportText(p, fmt){
     const key = n => p.scales[0].steps.length === 11 ? steps11[n] : n + 1;
     const lines = p.scales.map(s =>
       `        '${s.name}': {\n` + s.steps.map((h, i) => `          ${key(i)}: '${h}',`).join('\n') + '\n        },');
-    return `// tailwind.config.js 片段（由 OmniPalette 导出 · ${licTag(p)}）\nmodule.exports = {\n  theme: {\n    extend: {\n      colors: {\n${lines.join('\n')}\n      },\n    },\n  },\n};`;
+    return `// tailwind.config.js 片段（由 ColorCat 导出 · ${licTag(p)}）\nmodule.exports = {\n  theme: {\n    extend: {\n      colors: {\n${lines.join('\n')}\n      },\n    },\n  },\n};`;
   }
   if (fmt === 'figma') return figmaTokensOf(p);
   if (fmt === 'theme') return tailwindV4Of(p);
@@ -1132,7 +1132,7 @@ function scaleExportText(fmt){
         steps: scaleResult.detail.map((o, i) => ({ step: i + 1, target: +o.target.toFixed(2), reached: +o.reached.toFixed(2), hex: o.hex })),
       }, null, 2);
     }
-    return `/* 对比度目标色阶 · 基色 ${state.scaleHex} · 背景 ${scaleResult.bg}\n   每阶对背景的实际对比度见注释（Leonardo 式生成，OmniPalette 色阶工坊） */\n:root {\n` +
+    return `/* 对比度目标色阶 · 基色 ${state.scaleHex} · 背景 ${scaleResult.bg}\n   每阶对背景的实际对比度见注释（Leonardo 式生成，ColorCat 色阶工坊） */\n:root {\n` +
       scaleResult.detail.map((o, i) => `  --scale-${i + 1}: ${o.hex}; /* ${o.reached.toFixed(1)}:1 on ${scaleResult.bg} */`).join('\n') + '\n}';
   }
   if (fmt === 'json'){
@@ -1141,7 +1141,7 @@ function scaleExportText(fmt){
       steps: scaleResult.steps.map((h, i) => ({ step: i + 1, role: SCALE_ROLES[i], hex: h })),
     }, null, 2);
   }
-  return `/* 语义色阶 · 基色 ${state.scaleHex} · OKLCH 生成（OmniPalette 色阶工坊）\n   角色: 1-2 背景 · 3-4 交互态 · 5-7 边框 · 8-10 强调 · 11-12 文字 */\n:root {\n` +
+  return `/* 语义色阶 · 基色 ${state.scaleHex} · OKLCH 生成（ColorCat 色阶工坊）\n   角色: 1-2 背景 · 3-4 交互态 · 5-7 边框 · 8-10 强调 · 11-12 文字 */\n:root {\n` +
     scaleResult.steps.map((h, i) => `  --scale-${i + 1}: ${h}; /* ${SCALE_ROLES[i]} */`).join('\n') + '\n}';
 }
 
@@ -1433,7 +1433,7 @@ function bind(){
     const list = [...starred].map(id => PAL(id)).filter(Boolean);
     if (!list.length){ showToast(t('toast.favEmpty')); return; }
     download('omnipalette-favorites.json', JSON.stringify({
-      tool: 'OmniPalette 全能配色工作台', exportedAt: new Date().toISOString(),
+      tool: 'ColorCat 全能配色工作台', exportedAt: new Date().toISOString(),
       count: list.length, palettes: list.map(p => JSON.parse(exportText(p, 'json'))),
     }, null, 2));
     showToast(t('toast.favExported', { n: list.length }));
