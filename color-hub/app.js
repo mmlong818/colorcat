@@ -1456,7 +1456,7 @@ function bind(){
     showToast(t('toast.baseUpdated', { hex: sw.dataset.hex }));
   });
   $('#mhScheme').addEventListener('change', renderMh);
-  ['#mh1', '#mh2', '#mh3'].forEach(id => $('#' + id).addEventListener('input', renderMh));
+  ['mh1', 'mh2', 'mh3'].forEach(id => $('#' + id).addEventListener('input', renderMh));
   $('#btnMh').addEventListener('click', renderMh);
   $('#genInfoRows').addEventListener('click', async e => {
     const row = e.target.closest('.info-row');
