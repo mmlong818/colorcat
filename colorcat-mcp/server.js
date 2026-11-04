@@ -30,7 +30,7 @@ const clampInt = (v, def, min, max) => {
 /* ---------- 1. search_palettes ---------- */
 server.registerTool('search_palettes', {
   title: '搜索色板',
-  description: 'Search 127 built-in open-source palettes (UI design systems / scientific colormaps / curated packs / editor themes / traditional colors). 在 127 组内置开源色板中检索（UI 设计系统 / 数据可视化 / 策展合集 / 编辑器主题 / 传统色）。返回匹配的色板 id 与元信息，之后可用 get_palette 取色值。Categories: ui=design systems, viz=scientific colormaps, curated=65 themed packs (Pokémon/Ghibli/Met Museum...), editor=editor themes, traditional=Chinese & Japanese traditional colors. 类别：ui=设计系统, viz=数据可视化, curated=策展合集, editor=编辑器主题, traditional=传统色',
+  description: 'Search 134 built-in open-source palettes (UI design systems / scientific colormaps / curated packs / editor themes / traditional colors). 在 134 组内置开源色板中检索（UI 设计系统 / 数据可视化 / 策展合集 / 编辑器主题 / 传统色）。返回匹配的色板 id 与元信息，之后可用 get_palette 取色值。Categories: ui=design systems, viz=scientific colormaps, curated=65 themed packs (Pokémon/Ghibli/Met Museum...), editor=editor themes, traditional=Chinese & Japanese traditional colors. 类别：ui=设计系统, viz=数据可视化, curated=策展合集, editor=编辑器主题, traditional=传统色',
   inputSchema: {
     query: z.string().optional().describe('关键词，如 tailwind / nord / 传统色 / catppuccin / 宝可梦'),
     category: z.enum(['ui', 'viz', 'curated', 'editor', 'traditional', 'all']).optional().describe('类别筛选，默认 all'),

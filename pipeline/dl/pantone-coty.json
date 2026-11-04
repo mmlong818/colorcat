@@ -1,0 +1,170 @@
+[
+ {
+  "year": 2000,
+  "name": "Cerulean",
+  "hex": "#98B2D1",
+  "pantone": "15-4020"
+ },
+ {
+  "year": 2001,
+  "name": "Fuchsia Rose",
+  "hex": "#C74375",
+  "pantone": "17-2031"
+ },
+ {
+  "year": 2002,
+  "name": "True Red",
+  "hex": "#BF1932",
+  "pantone": "19-1664"
+ },
+ {
+  "year": 2003,
+  "name": "Aqua Sky",
+  "hex": "#7BC4C4",
+  "pantone": "14-4811"
+ },
+ {
+  "year": 2004,
+  "name": "Tigerlily",
+  "hex": "#E2583E",
+  "pantone": "17-1456"
+ },
+ {
+  "year": 2005,
+  "name": "Blue Turquoise",
+  "hex": "#53B0AE",
+  "pantone": "15-5217"
+ },
+ {
+  "year": 2006,
+  "name": "Sand Dollar",
+  "hex": "#DECDBE",
+  "pantone": "13-1106"
+ },
+ {
+  "year": 2007,
+  "name": "Chili Pepper",
+  "hex": "#9B1B30",
+  "pantone": "19-1557"
+ },
+ {
+  "year": 2008,
+  "name": "Blue Iris",
+  "hex": "#5A5B9F",
+  "pantone": "18-3943"
+ },
+ {
+  "year": 2009,
+  "name": "Mimosa",
+  "hex": "#F0C05A",
+  "pantone": "14-0848"
+ },
+ {
+  "year": 2010,
+  "name": "Turquoise",
+  "hex": "#45B5AA",
+  "pantone": "15-5519"
+ },
+ {
+  "year": 2011,
+  "name": "Honeysuckle",
+  "hex": "#D94F70",
+  "pantone": "18-2120"
+ },
+ {
+  "year": 2012,
+  "name": "Tangerine Tango",
+  "hex": "#DD4124",
+  "pantone": "17-1463"
+ },
+ {
+  "year": 2013,
+  "name": "Emerald",
+  "hex": "#009473",
+  "pantone": "17-5641"
+ },
+ {
+  "year": 2014,
+  "name": "Radiant Orchid",
+  "hex": "#B163A3",
+  "pantone": "18-3224"
+ },
+ {
+  "year": 2015,
+  "name": "Marsala",
+  "hex": "#964F4C",
+  "pantone": "18-1438"
+ },
+ {
+  "year": 2016,
+  "name": "Rose Quartz",
+  "hex": "#F7CAC9",
+  "pantone": "13-1520"
+ },
+ {
+  "year": 2016,
+  "name": "Serenity",
+  "hex": "#91A8D0",
+  "pantone": "15-3919"
+ },
+ {
+  "year": 2017,
+  "name": "Greenery",
+  "hex": "#88B04B",
+  "pantone": "15-0343"
+ },
+ {
+  "year": 2018,
+  "name": "Ultra Violet",
+  "hex": "#5F4B8B",
+  "pantone": "18-3838"
+ },
+ {
+  "year": 2019,
+  "name": "Living Coral",
+  "hex": "#ff6f61",
+  "pantone": "16-1546"
+ },
+ {
+  "year": 2020,
+  "name": "Classic Blue",
+  "hex": "#0f4c81",
+  "pantone": "19-4052"
+ },
+ {
+  "year": 2021,
+  "name": "Illuminating",
+  "hex": "#F5DF4D",
+  "pantone": "13-0647"
+ },
+ {
+  "year": 2021,
+  "name": "Ultimate Gray",
+  "hex": "#939597",
+  "pantone": "17-5104"
+ },
+ {
+  "year": 2022,
+  "name": "Very Peri",
+  "hex": "#6868AC",
+  "pantone": "17-3938"
+ },
+ {
+  "year": 2023,
+  "name": "Viva Magenta",
+  "hex": "#BB2649",
+  "pantone": "18-1750"
+ },
+ {
+  "year": 2024,
+  "name": "Peach Fuzz",
+  "hex": "#FFBE98",
+  "pantone": "13-1023"
+ },
+ {
+  "year": 2025,
+  "name": "Mocha Mousse",
+  "hex": "#A47864",
+  "pantone": "17-1230"
+ }
+]

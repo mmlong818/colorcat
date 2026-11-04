@@ -1,7 +1,7 @@
 # ColorCat · 全能配色工作台
 
 > OmniPalette — one workbench for every good color.
-> 127 组开源色板（4,824 个色块 / 2,823 套现成配色）· 色彩工程引擎 · MCP 服务 · 五语言界面（中/英/法/俄/日）· 纯前端离线可用
+> 134 组开源色板（4,902 个色块 / 4,854 套现成配色）· 色彩工程引擎 · MCP 服务 · 五语言界面（中/英/法/俄/日）· 纯前端离线可用
 
 **在线演示**：https://mmlong818.github.io/colorcat/ （GitHub Pages，来自 `color-hub/`）
 
@@ -11,8 +11,8 @@
 
 ```
 color-hub/      网站主体（色板库 / 色阶工坊 / 配色生成器 / 无障碍实验室 / 应用预览）——含 11 种经典配色方案学习器
-colorcat-mcp/   MCP 服务器（stdio + Streamable HTTP 双传输，10 个工具）
-scratch/        数据管线（从各开源官方源抓取 → 生成站点与 MCP 数据）
+colorcat-mcp/   MCP 服务器（stdio + Streamable HTTP 双传输，13 个工具）
+pipeline/        数据管线（从各开源官方源抓取 → 生成站点与 MCP 数据）
 ```
 
 环境要求：网页零依赖；MCP 需要 Node.js ≥ 18。
@@ -75,8 +75,8 @@ Claude Desktop（`claude_desktop_config.json`）结构略有不同，注意键�
 色板数据来自各开源官方源，一条命令同步网页与 MCP 两侧：
 
 ```bash
-node scratch/transform.js    # 产出 color-hub/palettes.js + colorcat-mcp/data.json
-node scratch/gen-m3.js       # 重新生成 Material 3 音调色板（需 scratch/dl/mcu-pkg）
+node pipeline/transform.js    # 产出 color-hub/palettes.js + colorcat-mcp/data.json
+node pipeline/gen-m3.js       # 重新生成 Material 3 音调色板（需 pipeline/dl/mcu-pkg）
 ```
 
 ## MCP 三种部署方式
@@ -87,7 +87,7 @@ node scratch/gen-m3.js       # 重新生成 Material 3 音调色板（需 scratc
 
 ### B. npm 分发（生态标准）
 
-维护者执行 `npm publish --access public` 发布后，别人无需 clone，客户端配置直接写：
+> **注意：尚未发布到 npm。** 目前仅可通过 GitHub clone 使用。维护者执行 `npm publish --access public` 后，别人即可用下方配置。
 
 ```json
 { "command": "npx", "args": ["-y", "colorcat-mcp"] }
@@ -128,10 +128,15 @@ $env:COLORCAT_TOKEN="你的秘密"; node server.js --http 3010
 ## 数据来源与许可
 
 - **代码**：MIT（见 LICENSE）。工具与引擎为原创实现；OKLab 数学基于 Björn Ottosson 的公有领域成果。
-- **色板数据**：均来自各开源项目公开发布的数据（Open Color / Tailwind / Ant Design / Radix / Material / IBM Carbon：MIT 或 Apache-2.0；Nord / Catppuccin / Dracula / Solarized / 中日传统色：MIT；策展合集经 EmilHvitfeldt/paletteer GPL-3 聚合）。每组色板在界面内标注许可类型。
+- **色板数据**：均来自各开源项目公开发布的数据（Open Color / Tailwind / Ant Design / Radix / Material / IBM Carbon：MIT 或 Apache-2.0；Nord / Catppuccin / Dracula / Solarized / 中日传统色：MIT）。每组色板在界面内标注许可类型。
+- **GPL-3 数据分离**：策展合集（65 包，经 EmilHvitfeldt/paletteer GPL-3 聚合）的数据单独存放在 `colorcat-mcp/data-gpl.json`；宽松许可数据在 `data-open.json`。合并文件 `data.json` 仅供本工具便利使用——如你二次分发，请单独审查 GPL-3 部分的分发条款。
 - **例外（保留致谢）**：Scientific Colour Maps（© Fabio Crameri，学术出版需按要求引用）；ColorBrewer（© Cynthia A. Brewer）。
+- **色名库**：xkcd 色名调查（CC0）+ Name That Color（CC BY 2.5，© Chirag Mehta）。
+- **Pantone 年度色**：色值为公开发布的事实数据；Pantone 为 Pantone LLC 注册商标。
 - **色觉模拟**：Viénot (1999) 近似算法。
 
-## 多语言
+## 多语言 / Languages
 
 界面右上角切换 中文 · English · Français · Русский · 日本語（自动记忆）。法/俄/日的色板描述暂回退英文，界面文字五语全量。
+
+**English documentation**: see [README.en.md](README.en.md)

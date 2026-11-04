@@ -1,13 +1,13 @@
 # ColorCat 配色猫 · MCP Server
 
-把 127 组开源色板 + 完整色彩工程引擎接入任意 MCP 客户端（ZCode / Claude Desktop / Cursor 等）。
+把 134 组开源色板 + 完整色彩工程引擎接入任意 MCP 客户端（ZCode / Claude Desktop / Cursor 等）。
 纯函数 + 离线数据，零网络请求。
 
 ## 工具清单（10 个）
 
 | 工具 | 用途 |
 |---|---|
-| `search_palettes` | 检索 127 组色板（UI 设计系统 / 学术色图 / 67 包策展合集 / 编辑器主题 / 中日传统色） |
+| `search_palettes` | 检索 134 组色板（UI 设计系统 / 学术色图 / 67 包策展合集 / 编辑器主题 / 中日传统色） |
 | `get_palette` | 取完整色值（多阶 / 渐变 / 26 色 mocha / 389 套宝可梦，带分页） |
 | `get_brewer_classes` | ColorBrewer 指定方案色值 + 官方色盲/打印安全标注（三态：是/否/官方未标注） |
 | `convert_color` | #hex / rgb() / hsl() → 全格式 + L\*a\*b\* + OKLCH + 最近色名 |
@@ -49,7 +49,7 @@
 网页端数据管线一条命令同步两边：
 
 ```bash
-node ../scratch/transform.js   # 同时产出 ../color-hub/palettes.js 和本目录 data.json
+node ../pipeline/transform.js   # 同时产出 ../color-hub/palettes.js 和本目录 data.json
 ```
 
 ## 测试
