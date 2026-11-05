@@ -1,6 +1,6 @@
 # ColorCat · 全能配色工作台
 
-> OmniPalette — one workbench for every good color.
+> ColorCat — one workbench for every good color.
 > 134 组开源色板（4,902 个色块 / 4,854 套现成配色）· 色彩工程引擎 · MCP 服务 · 五语言界面（中/英/法/俄/日）· 纯前端离线可用
 
 **在线演示**：https://mmlong818.github.io/colorcat/ （GitHub Pages，来自 `color-hub/`）
@@ -95,7 +95,7 @@ node pipeline/gen-m3.js       # 重新生成 Material 3 音调色板（需 pipel
 
 ### A. 本地分发（最简单）
 
-别人 clone 本仓库，进入 `colorcat-mcp` 执行 `npm install`，然后在客户端配置指向 `server.js` 的绝对路径。每人本地跑，数据离线，无需任何服务器。
+clone 本仓库，进入 `colorcat-mcp` 执行 `npm install`，然后在客户端配置指向 `server.js` 的绝对路径。本地跑，数据离线，无需任何服务器。
 
 ### B. npm 分发（生态标准）
 
