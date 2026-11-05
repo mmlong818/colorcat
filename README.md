@@ -7,12 +7,22 @@
 
 [![License: MIT](https://img.shields.io/badge/Code-MIT-blue.svg)](LICENSE)
 
+## 为什么选 ColorCat
+
+AI 写前端时最常见的配色问题，是它凭“感觉”给出色值：对比度说达标其实不达标，色板名称对了色值却是编的。ColorCat 让 AI 把这些事交给确定的计算和真实的数据。
+
+- **色值有出处**：134 组色板全部来自 Tailwind、Ant Design、Radix、Material、IBM Carbon、Nord、Catppuccin 等项目的官方发布数据，每组标注来源与许可，AI 拿到的不是“大概是这个颜色”。
+- **无障碍一条龙**：`audit_contrast` 批量审计整套配色的 WCAG 对比度，`suggest_fix` 为不达标的组合给出最接近原色的修正值，`simulate_vision` 检查色觉障碍用户看到的效果。
+- **官方算法生成 Material 3 主题**：`generate_m3` 使用 Google 官方 HCT 引擎，从一个品牌色生成完整的明暗动态主题，而不是近似模拟。
+- **数据可视化友好**：内置 ColorBrewer 与 Scientific Colour Maps，`sample_colormap` 可在连续色图任意位置精确取色。
+- **网页与 MCP 同一套数据**：可视化工作台里看到的色板、色阶，与 AI 调用工具得到的结果完全一致；全部离线运行，无需账号，不上传任何数据。
+
 ## 目录结构
 
 ```
 color-hub/      网站主体（色板库 / 色阶工坊 / 配色生成器 / 无障碍实验室 / 应用预览）——含 11 种经典配色方案学习器
 colorcat-mcp/   MCP 服务器（stdio + Streamable HTTP 双传输，13 个工具）
-pipeline/        数据管线（从各开源官方源抓取 → 生成站点与 MCP 数据）
+pipeline/       数据管线（从各开源官方源抓取 → 生成站点与 MCP 数据）
 ```
 
 环境要求：网页零依赖；MCP 需要 Node.js ≥ 18。
@@ -68,6 +78,8 @@ Claude Desktop（`claude_desktop_config.json`）结构略有不同，注意键�
 }
 ```
 
+> **Windows 用户注意**：JSON 中的路径要写成双反斜杠 `C:\\Users\\you\\colorcat\\colorcat-mcp\\server.js`，或直接用正斜杠 `C:/Users/you/colorcat/colorcat-mcp/server.js`。单反斜杠会导致配置解析失败。修改配置后需完全退出并重启客户端。
+
 13 个工具 + 双传输模式（stdio / Streamable HTTP）：`search_palettes` · `get_palette` · `get_brewer_classes` · `convert_color` · `contrast_check` · `suggest_fix` · `generate_scale` · `check_gradient` · `simulate_vision` · `preview_roles` · `audit_contrast`（批量对比度审计）· `generate_m3`（品牌色 → Material 3 动态主题，官方 HCT 引擎）· `sample_colormap`（连续色图任意位置采样）。
 
 ### 3. 重新生成数据
@@ -75,7 +87,7 @@ Claude Desktop（`claude_desktop_config.json`）结构略有不同，注意键�
 色板数据来自各开源官方源，一条命令同步网页与 MCP 两侧：
 
 ```bash
-node pipeline/transform.js    # 产出 color-hub/palettes.js + colorcat-mcp/data.json
+node pipeline/transform.js    # 产出 color-hub/palettes.js + colorcat-mcp/data-open.json + data-gpl.json
 node pipeline/gen-m3.js       # 重新生成 Material 3 音调色板（需 pipeline/dl/mcu-pkg）
 ```
 
@@ -87,7 +99,7 @@ node pipeline/gen-m3.js       # 重新生成 Material 3 音调色板（需 pipel
 
 ### B. npm 分发（生态标准）
 
-> **注意：尚未发布到 npm。** 目前仅可通过 GitHub clone 使用。维护者执行 `npm publish --access public` 后，别人即可用下方配置。
+> **注意：尚未发布到 npm。** 目前仅可通过 GitHub clone 使用。发布后可用下方配置。
 
 ```json
 { "command": "npx", "args": ["-y", "colorcat-mcp"] }
@@ -128,11 +140,11 @@ $env:COLORCAT_TOKEN="你的秘密"; node server.js --http 3010
 ## 数据来源与许可
 
 - **代码**：MIT（见 LICENSE）。工具与引擎为原创实现；OKLab 数学基于 Björn Ottosson 的公有领域成果。
-- **色板数据**：均来自各开源项目公开发布的数据（Open Color / Tailwind / Ant Design / Radix / Material / IBM Carbon：MIT 或 Apache-2.0；Nord / Catppuccin / Dracula / Solarized / 中日传统色：MIT）。每组色板在界面内标注许可类型。
-- **GPL-3 数据分离**：策展合集（65 包，经 EmilHvitfeldt/paletteer GPL-3 聚合）的数据单独存放在 `colorcat-mcp/data-gpl.json`；宽松许可数据在 `data-open.json`。合并文件 `data.json` 仅供本工具便利使用——如你二次分发，请单独审查 GPL-3 部分的分发条款。
+- **宽松许可色板**（`colorcat-mcp/data-open.json`，默认加载）：Open Color / Tailwind / Ant Design / Radix / Material / IBM Carbon：MIT 或 Apache-2.0；Nord / Catppuccin / Dracula / Solarized / 中日传统色：MIT。每组色板在界面内标注许可类型。
+- **GPL-3 策展合集**（`colorcat-mcp/data-gpl.json`，可选加载）：65 包，经 EmilHvitfeldt/paletteer 聚合，按 GPL-3.0 授权（全文见 [`colorcat-mcp/LICENSE-GPL-3.0`](colorcat-mcp/LICENSE-GPL-3.0)）。MCP 默认不加载这部分，设置环境变量 `COLORCAT_INCLUDE_GPL=1` 后启用。二次分发 `data-gpl.json` 时须遵守 GPL-3.0 条款。
 - **例外（保留致谢）**：Scientific Colour Maps（© Fabio Crameri，学术出版需按要求引用）；ColorBrewer（© Cynthia A. Brewer）。
 - **色名库**：xkcd 色名调查（CC0）+ Name That Color（CC BY 2.5，© Chirag Mehta）。
-- **Pantone 年度色**：色值为公开发布的事实数据；Pantone 为 Pantone LLC 注册商标。
+- **Pantone 年度色**：色值为公开发布的事实数据；Pantone 为 Pantone LLC 注册商标，本项目与 Pantone LLC 无关联。
 - **色觉模拟**：Viénot (1999) 近似算法。
 
 ## 多语言 / Languages
